@@ -1,0 +1,90 @@
+package com.example.ticketmaster.controller;
+
+import com.example.ticketmaster.service.EventService;
+import com.example.ticketmaster.service.TicketService;
+import com.example.ticketmaster.service.UserService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+@Controller
+@RequestMapping("/admin")
+public class AdminController {
+
+    private final UserService userService;
+    private final EventService eventService;
+    private final TicketService ticketService;
+
+    public AdminController(UserService userService, EventService eventService, TicketService ticketService) {
+        this.userService = userService;
+        this.eventService = eventService;
+        this.ticketService = ticketService;
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard(Model model) {
+        model.addAttribute("totalUsers", userService.getAllUsers().size());
+        model.addAttribute("totalEvents", eventService.getAllEvents().size());
+        model.addAttribute("pendingEvents", eventService.getPendingEvents().size());
+        model.addAttribute("totalTickets", ticketService.getAllTickets().size());
+        return "admin/dashboard";
+    }
+
+    @GetMapping("/users")
+    public String users(Model model) {
+        model.addAttribute("users", userService.getAllUsers());
+        return "admin/users";
+    }
+
+    @GetMapping("/events")
+    public String events(Model model) {
+        model.addAttribute("events", eventService.getAllEvents());
+        model.addAttribute("pendingEvents", eventService.getPendingEvents());
+        return "admin/events";
+    }
+
+    @PostMapping("/events/{id}/approve")
+    public String approveEvent(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            eventService.approveEvent(id);
+            redirectAttributes.addFlashAttribute("message", "Event approved successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to approve event: " + e.getMessage());
+        }
+        return "redirect:/admin/events";
+    }
+
+    @PostMapping("/events/{id}/reject")
+    public String rejectEvent(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            eventService.rejectEvent(id);
+            redirectAttributes.addFlashAttribute("message", "Event rejected successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to reject event: " + e.getMessage());
+        }
+        return "redirect:/admin/events";
+    }
+
+    @PostMapping("/events/{id}/delete")
+    public String deleteEvent(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            eventService.deleteEvent(id);
+            redirectAttributes.addFlashAttribute("message", "Event deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to delete event: " + e.getMessage());
+        }
+        return "redirect:/admin/events";
+    }
+
+    @PostMapping("/users/{id}/delete")
+    public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            userService.deleteUser(id);
+            redirectAttributes.addFlashAttribute("message", "User deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to delete user: " + e.getMessage());
+        }
+        return "redirect:/admin/users";
+    }
+}
