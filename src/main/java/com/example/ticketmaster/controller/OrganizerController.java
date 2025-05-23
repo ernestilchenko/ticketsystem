@@ -34,6 +34,7 @@ public class OrganizerController {
                 .filter(e -> e.getStatus() == Event.EventStatus.APPROVED).count());
         model.addAttribute("pendingEvents", myEvents.stream()
                 .filter(e -> e.getStatus() == Event.EventStatus.PENDING_APPROVAL).count());
+        model.addAttribute("currentPage", "organizer-dashboard");
 
         return "organizer/dashboard";
     }
@@ -42,6 +43,7 @@ public class OrganizerController {
     public String events(Authentication authentication, Model model) {
         User organizer = (User) authentication.getPrincipal();
         model.addAttribute("events", eventService.getEventsByOrganizer(organizer));
+        model.addAttribute("currentPage", "organizer-events");
         return "organizer/events";
     }
 
@@ -49,6 +51,7 @@ public class OrganizerController {
     public String createEventForm(Model model) {
         model.addAttribute("event", new Event());
         model.addAttribute("categories", Event.EventCategory.values());
+        model.addAttribute("currentPage", "organizer-create-event");
         return "organizer/create-event";
     }
 
@@ -59,6 +62,7 @@ public class OrganizerController {
 
         if (result.hasErrors()) {
             model.addAttribute("categories", Event.EventCategory.values());
+            model.addAttribute("currentPage", "organizer-create-event");
             return "organizer/create-event";
         }
 
@@ -71,6 +75,7 @@ public class OrganizerController {
         } catch (Exception e) {
             model.addAttribute("error", "Failed to create event: " + e.getMessage());
             model.addAttribute("categories", Event.EventCategory.values());
+            model.addAttribute("currentPage", "organizer-create-event");
             return "organizer/create-event";
         }
     }
@@ -87,6 +92,7 @@ public class OrganizerController {
 
         model.addAttribute("event", event);
         model.addAttribute("categories", Event.EventCategory.values());
+        model.addAttribute("currentPage", "organizer-events");
         return "organizer/edit-event";
     }
 
@@ -97,6 +103,7 @@ public class OrganizerController {
 
         if (result.hasErrors()) {
             model.addAttribute("categories", Event.EventCategory.values());
+            model.addAttribute("currentPage", "organizer-events");
             return "organizer/edit-event";
         }
 
@@ -116,6 +123,7 @@ public class OrganizerController {
         } catch (Exception e) {
             model.addAttribute("error", "Failed to update event: " + e.getMessage());
             model.addAttribute("categories", Event.EventCategory.values());
+            model.addAttribute("currentPage", "organizer-events");
             return "organizer/edit-event";
         }
     }
@@ -132,6 +140,7 @@ public class OrganizerController {
 
         model.addAttribute("event", event);
         model.addAttribute("tickets", ticketService.getTicketsByEvent(event));
+        model.addAttribute("currentPage", "organizer-events");
         return "organizer/event-tickets";
     }
 }

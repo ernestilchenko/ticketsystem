@@ -32,6 +32,7 @@ public class ClientController {
                 .limit(5)
                 .toList());
         model.addAttribute("availableEvents", eventService.getAvailableEvents().size());
+        model.addAttribute("currentPage", "client-dashboard");
 
         return "client/dashboard";
     }
@@ -40,6 +41,7 @@ public class ClientController {
     public String events(Model model) {
         model.addAttribute("events", eventService.getAvailableEvents());
         model.addAttribute("categories", Event.EventCategory.values());
+        model.addAttribute("currentPage", "client-events");
         return "client/events";
     }
 
@@ -49,6 +51,7 @@ public class ClientController {
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
         model.addAttribute("event", event);
+        model.addAttribute("currentPage", "client-events");
         return "client/event-details";
     }
 
@@ -108,6 +111,7 @@ public class ClientController {
     public String tickets(Authentication authentication, Model model) {
         User client = (User) authentication.getPrincipal();
         model.addAttribute("tickets", ticketService.getTicketsByUser(client));
+        model.addAttribute("currentPage", "client-tickets");
         return "client/tickets";
     }
 

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="fragments/layout :: head('Admin Dashboard')"></head>
+<head th:replace="~{fragments/layout :: head('Admin Dashboard')}"></head>
 <body>
-<nav th:replace="fragments/layout :: navbar"></nav>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
 <div class="dashboard-container">
-  <div th:replace="fragments/layout :: sidebar-admin"></div>
+  <div th:replace="~{fragments/layout :: sidebar-admin}"></div>
 
   <div class="content-wrapper">
     <div class="container-fluid">
@@ -130,7 +130,7 @@
         </div>
         <div class="card-body">
           <div class="table-responsive">
-            <table class="table table-hover" th:if="${pendingEvents > 0}">
+            <table class="table table-hover" th:if="${pendingEventsList != null && !pendingEventsList.empty}">
               <thead>
               <tr>
                 <th>Event Name</th>
@@ -141,7 +141,7 @@
               </tr>
               </thead>
               <tbody>
-              <tr th:each="event : ${pendingEvents}">
+              <tr th:each="event : ${pendingEventsList}">
                 <td th:text="${event.name}">Event Name</td>
                 <td th:text="${event.organizer.firstName + ' ' + event.organizer.lastName}">Organizer Name</td>
                 <td th:text="${#temporals.format(event.eventDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</td>
@@ -173,9 +173,9 @@
   </div>
 </div>
 
-<footer th:replace="fragments/layout :: footer"></footer>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 
-<script>
+<script th:inline="javascript">
   document.addEventListener('DOMContentLoaded', function() {
     // System Stats Chart
     const ctx = document.getElementById('systemStats').getContext('2d');
@@ -186,10 +186,10 @@
         datasets: [{
           label: 'System Statistics',
           data: [
-            [[${totalUsers}]],
-            [[${totalEvents}]],
-            [[${pendingEvents}]],
-            [[${totalTickets}]]
+            /*[[${totalUsers}]]*/ 0,
+            /*[[${totalEvents}]]*/ 0,
+            /*[[${pendingEvents}]]*/ 0,
+            /*[[${totalTickets}]]*/ 0
           ],
           backgroundColor: [
             'rgba(59, 113, 202, 0.7)',

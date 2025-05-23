@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="fragments/layout :: head('Client Dashboard')"></head>
+<head th:replace="~{fragments/layout :: head('Client Dashboard')}"></head>
 <body>
-<nav th:replace="fragments/layout :: navbar"></nav>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
 <div class="dashboard-container">
-  <div th:replace="fragments/layout :: sidebar-client"></div>
+  <div th:replace="~{fragments/layout :: sidebar-client}"></div>
 
   <div class="content-wrapper">
     <div class="container-fluid">
@@ -94,13 +94,13 @@
                     <td th:text="${#temporals.format(ticket.event.eventDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025</td>
                     <td th:text="'$' + ${ticket.price}">$99</td>
                     <td>
-                                                    <span class="badge"
-                                                          th:classappend="${ticket.status.name() == 'PAID' ? 'bg-success' :
-                                                                          (ticket.status.name() == 'RESERVED' ? 'bg-warning' :
-                                                                          (ticket.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
-                                                          th:text="${ticket.status}">
-                                                        Status
-                                                    </span>
+                      <span class="badge"
+                            th:classappend="${ticket.status.name() == 'PAID' ? 'bg-success' :
+                                            (ticket.status.name() == 'RESERVED' ? 'bg-warning' :
+                                            (ticket.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
+                            th:text="${ticket.status}">
+                        Status
+                      </span>
                     </td>
                     <td>
                       <a th:href="@{/client/events/{id}(id=${ticket.event.id})}" class="btn btn-sm btn-outline-primary">
@@ -163,6 +163,6 @@
   </div>
 </div>
 
-<footer th:replace="fragments/layout :: footer"></footer>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>

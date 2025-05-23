@@ -24,16 +24,21 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
+        var pendingEventsList = eventService.getPendingEvents();
+
         model.addAttribute("totalUsers", userService.getAllUsers().size());
         model.addAttribute("totalEvents", eventService.getAllEvents().size());
-        model.addAttribute("pendingEvents", eventService.getPendingEvents().size());
+        model.addAttribute("pendingEvents", pendingEventsList.size());
+        model.addAttribute("pendingEventsList", pendingEventsList);
         model.addAttribute("totalTickets", ticketService.getAllTickets().size());
+        model.addAttribute("currentPage", "admin-dashboard");
         return "admin/dashboard";
     }
 
     @GetMapping("/users")
     public String users(Model model) {
         model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("currentPage", "admin-users");
         return "admin/users";
     }
 
@@ -41,6 +46,7 @@ public class AdminController {
     public String events(Model model) {
         model.addAttribute("events", eventService.getAllEvents());
         model.addAttribute("pendingEvents", eventService.getPendingEvents());
+        model.addAttribute("currentPage", "admin-events");
         return "admin/events";
     }
 
