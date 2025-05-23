@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/layout :: head('Browse Events')"></head>
+<body>
+<nav th:replace="fragments/layout :: navbar"></nav>
+
+<div class="dashboard-container">
+  <div th:replace="fragments/layout :: sidebar-client"></div>
+
+  <div class="content-wrapper">
+    <div class="container-fluid">
+      <h1 class="mb-4">Browse Events</h1>
+
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="search-events" placeholder="Search events by name or location...">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" id="category-filter">
+            <option value="ALL" selected>All Categories</option>
+            <option th:each="category : ${categories}" th:value="${category}" th:text="${category}">CATEGORY</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" id="sort-by">
+            <option value="date" selected>Sort by Date</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name">Name</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" th:if="${events != null && !events.empty}">
+        <div class="col-md-4 mb-4 event-item" th:each="event : ${events}"
+             th:data-category="${event.category}"
+             th:data-name="${event.name}"
+             th:data-location="${event.location}">
+          <div class="card event-card h-100 shadow-sm">
+            <div class="position-relative">
+              <img class="card-img-top" th:src="@{/images/event-placeholder.jpg}" alt="Event image">
+              <span class="badge bg-primary event-badge" th:text="${event.category}">CONCERT</span>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title" th:text="${event.name}">Event Name</h5>
+              <p class="card-text text-muted">
+                <i class="bi bi-calendar-event me-2"></i>
+                <span th:text="${#temporals.format(event.eventDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</span>
+              </p>
+              <p class="card-text text-muted">
+                <i class="bi bi-geo-alt me-2"></i>
+                <span th:text="${event.location}">Event Location</span>
+              </p>
+              <p class="card-text" th:text="${#strings.abbreviate(event.description, 100)}">Event description...</p>
+              <p class="card-text text-muted">
+                <i class="bi bi-ticket-perforated me-2"></i>
+                <span th:text="${event.availableSeats} + ' seats available'">123 seats available</span>
+              </p>
+            </div>
+            <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+              <span class="fw-bold text-primary" th:text="'$' + ${event.price}">$99</span>
+              <a th:href="@{/client/events/{id}(id=${event.id})}" class="btn btn-outline-primary">View Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center" th:if="${events == null || events.empty}">
+        <div class="alert alert-info">
+          <i class="bi bi-info-circle-fill me-2"></i>No events found matching your criteria.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Sort functionality
+    const sortSelect = document.getElementById('sort-by');
+    if (sortSelect) {
+      sortSelect.addEventListener('change', function() {
+        const selectedSort = this.value;
+        const eventCards = document.querySelectorAll('.event-item');
+        const eventsArray = Array.from(eventCards);
+
+        eventsArray.sort((a, b) => {
+          if (selectedSort === 'date') {
+            const dateA = new Date(a.querySelector('.bi-calendar-event').nextElementSibling.textContent);
+            const dateB = new Date(b.querySelector('.bi-calendar-event').nextElementSibling.textContent);
+            return dateA - dateB;
+          } else if (selectedSort === 'price-asc') {
+            const priceA = parseFloat(a.querySelector('.fw-bold').textContent.replace('$', ''));
+            const priceB = parseFloat(b.querySelector('.fw-bold').textContent.replace('$', ''));
+            return priceA - priceB;
+          } else if (selectedSort === 'price-desc') {
+            const priceA = parseFloat(a.querySelector('.fw-bold').textContent.replace('$', ''));
+            const priceB = parseFloat(b.querySelector('.fw-bold').textContent.replace('$', ''));
+            return priceB - priceA;
+          } else if (selectedSort === 'name') {
+            const nameA = a.querySelector('.card-title').textContent;
+            const nameB = b.querySelector('.card-title').textContent;
+            return nameA.localeCompare(nameB);
+          }
+        });
+
+        const container = document.querySelector('.row');
+        eventsArray.forEach(card => container.appendChild(card));
+      });
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/layout :: head('Event Details')"></head>
+<body>
+<nav th:replace="fragments/layout :: navbar"></nav>
+
+<div class="dashboard-container">
+  <div th:replace="fragments/layout :: sidebar-client"></div>
+
+  <div class="content-wrapper">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Event Details</h1>
+        <a th:href="@{/client/events}" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-left me-2"></i>Back to Events
+        </a>
+      </div>
+
+      <div th:if="${message}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle-fill me-2"></i><span th:text="${message}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <div class="card shadow-sm mb-4">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img th:src="@{/images/event-placeholder.jpg}" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="Event image">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start">
+                <h2 class="card-title" th:text="${event.name}">Event Name</h2>
+                <span class="badge bg-primary fs-6" th:text="${event.category}">CONCERT</span>
+              </div>
+
+              <div class="d-flex flex-wrap mt-3 mb-4">
+                <div class="me-4 mb-3">
+                  <h6 class="text-muted"><i class="bi bi-calendar-event me-2"></i>Date & Time</h6>
+                  <p class="mb-0" th:text="${#temporals.format(event.eventDate, 'dd MMMM yyyy, HH:mm')}">01 January 2025, 19:00</p>
+                </div>
+                <div class="me-4 mb-3">
+                  <h6 class="text-muted"><i class="bi bi-geo-alt me-2"></i>Location</h6>
+                  <p class="mb-0" th:text="${event.location}">Event Location</p>
+                </div>
+                <div class="me-4 mb-3">
+                  <h6 class="text-muted"><i class="bi bi-cash-stack me-2"></i>Price</h6>
+                  <p class="mb-0 fw-bold text-primary" th:text="'$' + ${event.price}">$99</p>
+                </div>
+                <div class="mb-3">
+                  <h6 class="text-muted"><i class="bi bi-ticket-perforated me-2"></i>Available Seats</h6>
+                  <p class="mb-0" th:text="${event.availableSeats} + '/' + ${event.totalSeats}">123/200</p>
+                </div>
+              </div>
+
+              <h5>About This Event</h5>
+              <p class="card-text" th:text="${event.description}">Detailed event description...</p>
+
+              <h5>Organizer</h5>
+              <p class="card-text" th:text="${event.organizer.firstName + ' ' + event.organizer.lastName}">Organizer Name</p>
+
+              <div class="mt-4" th:if="${event.availableSeats > 0}">
+                <h5>Get Your Tickets</h5>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <form th:action="@{/client/events/{id}/purchase(id=${event.id})}" method="post">
+                      <div class="mb-3">
+                        <label for="seatNumber" class="form-label">Seat Selection (Optional)</label>
+                        <input type="text" class="form-control" id="seatNumber" name="seatNumber" placeholder="General Admission">
+                      </div>
+
+                      <div id="seat-selection" th:data-available-seats="${event.availableSeats}">
+                        <p>Select your seat:</p>
+                        <div id="seat-container" class="mb-3 text-center"></div>
+                      </div>
+
+                      <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                          <i class="bi bi-credit-card me-2"></i>Purchase Now
+                        </button>
+                        <button type="submit" class="btn btn-outline-primary" formaction="@{/client/events/{id}/reserve(id=${event.id})}">
+                          <i class="bi bi-bookmark me-2"></i>Reserve Ticket
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="card bg-light">
+                      <div class="card-body">
+                        <h6 class="card-title">Ticket Summary</h6>
+                        <div class="d-flex justify-content-between mb-2">
+                          <span>Event:</span>
+                          <span th:text="${event.name}">Event Name</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                          <span>Date:</span>
+                          <span th:text="${#temporals.format(event.eventDate, 'dd MMM yyyy')}">01 Jan 2025</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                          <span>Time:</span>
+                          <span th:text="${#temporals.format(event.eventDate, 'HH:mm')}">19:00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                          <span>Price:</span>
+                          <span class="fw-bold" th:text="'$' + ${event.price}">$99</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                          <span class="fw-bold">Total:</span>
+                          <span class="fw-bold text-primary" th:text="'$' + ${event.price}">$99</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="alert alert-warning mt-4" th:if="${event.availableSeats <= 0}">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>Sorry, this event is sold out!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+</body>
+</html>

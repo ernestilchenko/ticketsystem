@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/layout :: head('Register')"></head>
+<body>
+<nav th:replace="fragments/layout :: navbar"></nav>
+
+<div class="auth-wrapper">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card auth-card shadow">
+          <div class="card-header bg-primary text-white text-center py-3">
+            <h4 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Create Your Account</h4>
+          </div>
+          <div class="card-body p-4">
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <form th:action="@{/register}" th:object="${user}" method="post" class="needs-validation" novalidate>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="firstName" class="form-label">First Name</label>
+                  <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+                  <div class="invalid-feedback">First name is required</div>
+                  <div th:if="${#fields.hasErrors('firstName')}" class="text-danger" th:errors="*{firstName}"></div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="lastName" class="form-label">Last Name</label>
+                  <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
+                  <div class="invalid-feedback">Last name is required</div>
+                  <div th:if="${#fields.hasErrors('lastName')}" class="text-danger" th:errors="*{lastName}"></div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-person"></i></span>
+                  <input type="text" class="form-control" id="username" th:field="*{username}" required>
+                </div>
+                <div class="invalid-feedback">Username is required</div>
+                <div th:if="${#fields.hasErrors('username')}" class="text-danger" th:errors="*{username}"></div>
+              </div>
+
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                  <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                </div>
+                <div class="invalid-feedback">Valid email is required</div>
+                <div th:if="${#fields.hasErrors('email')}" class="text-danger" th:errors="*{email}"></div>
+              </div>
+
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                  <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                </div>
+                <div class="invalid-feedback">Password must be at least 6 characters</div>
+                <div th:if="${#fields.hasErrors('password')}" class="text-danger" th:errors="*{password}"></div>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label">Account Type</label>
+                <div class="d-flex">
+                  <div class="form-check me-4">
+                    <input class="form-check-input" type="radio" name="roleType" id="roleClient" value="client" checked>
+                    <label class="form-check-label" for="roleClient">
+                      <i class="bi bi-person me-1"></i>Client (Buy Tickets)
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="roleType" id="roleOrganizer" value="organizer">
+                    <label class="form-check-label" for="roleOrganizer">
+                      <i class="bi bi-calendar-event me-1"></i>Event Organizer
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <i class="bi bi-person-plus-fill me-2"></i>Register
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer text-center py-3">
+            <p class="mb-0">Already have an account? <a th:href="@{/login}" class="text-primary">Login here</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+</body>
+</html>

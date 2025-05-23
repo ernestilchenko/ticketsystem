@@ -1,0 +1,230 @@
+:root {
+    --primary-color: #3b71ca;
+    --secondary-color: #6c757d;
+    --success-color: #14a44d;
+    --danger-color: #dc4c64;
+    --warning-color: #e4a11b;
+    --info-color: #54b4d3;
+    --light-color: #fbfbfb;
+    --dark-color: #332D2D;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Dashboard Layout */
+.dashboard-container {
+    display: flex;
+    min-height: calc(100vh - 56px);
+}
+
+.sidebar {
+    width: 250px;
+    min-height: calc(100vh - 56px);
+    position: fixed;
+    top: 56px;
+    left: 0;
+}
+
+.content-wrapper {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        position: static;
+        min-height: auto;
+    }
+
+    .content-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .dashboard-container {
+        flex-direction: column;
+    }
+}
+
+/* Cards */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.dashboard-stat-card {
+    border-left: 4px solid var(--primary-color);
+}
+
+.dashboard-stat-card.success {
+    border-left-color: var(--success-color);
+}
+
+.dashboard-stat-card.warning {
+    border-left-color: var(--warning-color);
+}
+
+.dashboard-stat-card.danger {
+    border-left-color: var(--danger-color);
+}
+
+.dashboard-stat-card.info {
+    border-left-color: var(--info-color);
+}
+
+.dashboard-stat-card .card-icon {
+    font-size: 3rem;
+    opacity: 0.3;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Event Cards */
+.event-card {
+    height: 100%;
+}
+
+.event-card .card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.event-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Tickets */
+.ticket-card {
+    border: 1px solid #ddd;
+    position: relative;
+    overflow: hidden;
+}
+
+.ticket-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20px;
+    height: 100%;
+    width: 1px;
+    background: radial-gradient(circle, #000 1px, transparent 1px) repeat-y;
+    background-size: 1px 15px;
+    z-index: 1;
+}
+
+.ticket-status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    transform: rotate(5deg);
+}
+
+/* Auth pages */
+.auth-wrapper {
+    min-height: calc(100vh - 56px - 237px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+}
+
+.auth-card {
+    max-width: 500px;
+    width: 100%;
+}
+
+/* Home page */
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 100px 0;
+    margin-bottom: 50px;
+}
+
+.event-highlight {
+    transition: transform 0.3s ease;
+}
+
+.event-highlight:hover {
+    transform: scale(1.03);
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Form controls */
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(59, 113, 202, 0.25);
+}
+
+/* Alert messages */
+.alert {
+    border-radius: 10px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Tables */
+.table th {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(59, 113, 202, 0.05);
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+}
+
+footer a {
+    text-decoration: none;
+}

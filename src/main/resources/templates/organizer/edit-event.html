@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/layout :: head('Create Event')"></head>
+<body>
+<nav th:replace="fragments/layout :: navbar"></nav>
+
+<div class="dashboard-container">
+  <div th:replace="fragments/layout :: sidebar-organizer"></div>
+
+  <div class="content-wrapper">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Create New Event</h1>
+        <a th:href="@{/organizer/events}" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-left me-2"></i>Back to Events
+        </a>
+      </div>
+
+      <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <form th:action="@{/organizer/events/create}" th:object="${event}" method="post" class="needs-validation" novalidate>
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="name" class="form-label">Event Name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                  <div class="invalid-feedback">Event name is required</div>
+                  <div th:if="${#fields.hasErrors('name')}" class="text-danger" th:errors="*{name}"></div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
+                  <select class="form-select" id="category" th:field="*{category}" required>
+                    <option value="" selected disabled>Select a category</option>
+                    <option th:each="categoryOpt : ${categories}"
+                            th:value="${categoryOpt}"
+                            th:text="${categoryOpt}">
+                      CATEGORY
+                    </option>
+                  </select>
+                  <div class="invalid-feedback">Please select a category</div>
+                  <div th:if="${#fields.hasErrors('category')}" class="text-danger" th:errors="*{category}"></div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="eventDate" class="form-label">Date & Time <span class="text-danger">*</span></label>
+                  <input type="datetime-local" class="form-control" id="eventDate" th:field="*{eventDate}"
+                         placeholder="Select date and time" required>
+                  <div class="invalid-feedback">Event date and time are required</div>
+                  <div th:if="${#fields.hasErrors('eventDate')}" class="text-danger" th:errors="*{eventDate}"></div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="location" th:field="*{location}" required>
+                  <div class="invalid-feedback">Location is required</div>
+                  <div th:if="${#fields.hasErrors('location')}" class="text-danger" th:errors="*{location}"></div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="price" class="form-label">Ticket Price ($) <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="price" th:field="*{price}" min="0" step="0.01" required>
+                  </div>
+                  <div class="invalid-feedback">Valid price is required</div>
+                  <div th:if="${#fields.hasErrors('price')}" class="text-danger" th:errors="*{price}"></div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="totalSeats" class="form-label">Total Seats <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control" id="totalSeats" th:field="*{totalSeats}" min="1" required>
+                  <div class="invalid-feedback">Number of seats is required</div>
+                  <div th:if="${#fields.hasErrors('totalSeats')}" class="text-danger" th:errors="*{totalSeats}"></div>
+                  <small class="form-text text-muted">Enter the total capacity for your event</small>
+                </div>
+
+                <div class="mb-3">
+                  <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+                  <textarea class="form-control" id="description" th:field="*{description}" rows="5" required></textarea>
+                  <div class="invalid-feedback">Description is required</div>
+                  <div th:if="${#fields.hasErrors('description')}" class="text-danger" th:errors="*{description}"></div>
+                  <small class="form-text text-muted">Provide details about your event to attract attendees</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-info mb-4">
+              <i class="bi bi-info-circle-fill me-2"></i>
+              <strong>Note:</strong> All events require admin approval before they become visible to clients.
+              You'll be notified once your event is approved.
+            </div>
+
+            <div class="d-flex justify-content-end">
+              <a th:href="@{/organizer/events}" class="btn btn-outline-secondary me-2">Cancel</a>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save me-2"></i>Create Event
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+</body>
+</html>

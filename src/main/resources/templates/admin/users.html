@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/layout :: head('Manage Users')"></head>
+<body>
+<nav th:replace="fragments/layout :: navbar"></nav>
+
+<div class="dashboard-container">
+  <div th:replace="fragments/layout :: sidebar-admin"></div>
+
+  <div class="content-wrapper">
+    <div class="container-fluid">
+      <h1 class="mb-4">Manage Users</h1>
+
+      <div th:if="${message}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle-fill me-2"></i><span th:text="${message}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">All Users</h5>
+          <div class="input-group" style="width: 300px;">
+            <input type="text" class="form-control" id="searchUsers" placeholder="Search users...">
+            <button class="btn btn-outline-primary" type="button">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover" th:if="${users != null && !users.empty}">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="user : ${users}">
+                <td th:text="${user.id}">1</td>
+                <td th:text="${user.username}">username</td>
+                <td th:text="${user.firstName + ' ' + user.lastName}">John Doe</td>
+                <td th:text="${user.email}">email@example.com</td>
+                <td>
+                                            <span th:each="role : ${user.roles}" class="badge me-1"
+                                                  th:classappend="${role.name == 'ADMIN' ? 'bg-danger' :
+                                                                  (role.name == 'ORGANIZER' ? 'bg-success' : 'bg-primary')}"
+                                                  th:text="${role.name}">
+                                                ROLE
+                                            </span>
+                </td>
+                <td>
+                                            <span class="badge" th:classappend="${user.enabled ? 'bg-success' : 'bg-danger'}"
+                                                  th:text="${user.enabled ? 'Active' : 'Inactive'}">
+                                                Status
+                                            </span>
+                </td>
+                <td>
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-info me-1" data-bs-toggle="modal"
+                            th:data-bs-target="'#userDetailsModal' + ${user.id}">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post">
+                      <button type="submit" class="btn btn-sm btn-danger btn-delete-confirm"
+                              th:disabled="${user.username == #authentication.name}">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </form>
+                  </div>
+
+                  <!-- User Details Modal -->
+                  <div class="modal fade" th:id="'userDetailsModal' + ${user.id}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">User Details</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="mb-3 text-center">
+                            <div class="avatar bg-light rounded-circle p-3 mx-auto" style="width: 100px; height: 100px;">
+                              <i class="bi bi-person-fill text-primary" style="font-size: 3rem;"></i>
+                            </div>
+                            <h4 class="mt-3" th:text="${user.firstName + ' ' + user.lastName}">John Doe</h4>
+                            <div>
+                                                                    <span th:each="role : ${user.roles}" class="badge me-1"
+                                                                          th:classappend="${role.name == 'ADMIN' ? 'bg-danger' :
+                                                                                        (role.name == 'ORGANIZER' ? 'bg-success' : 'bg-primary')}"
+                                                                          th:text="${role.name}">
+                                                                        ROLE
+                                                                    </span>
+                            </div>
+                          </div>
+
+                          <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                              <span>Username</span>
+                              <span class="text-muted" th:text="${user.username}">username</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                              <span>Email</span>
+                              <span class="text-muted" th:text="${user.email}">email@example.com</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                              <span>Status</span>
+                              <span class="badge" th:classappend="${user.enabled ? 'bg-success' : 'bg-danger'}"
+                                    th:text="${user.enabled ? 'Active' : 'Inactive'}">
+                                                                        Status
+                                                                    </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                              <span>Created</span>
+                              <span class="text-muted" th:text="${#temporals.format(user.createdAt, 'dd MMM yyyy')}">01 Jan 2025</span>
+                            </li>
+                          </ul>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post"
+                                th:if="${user.username != #authentication.name}">
+                            <button type="submit" class="btn btn-danger btn-delete-confirm">
+                              <i class="bi bi-trash me-1"></i>Delete User
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+            <div class="text-center" th:if="${users == null || users.empty}">
+              <p>No users found.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality for users
+    const searchInput = document.getElementById('searchUsers');
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const userRows = document.querySelectorAll('table tbody tr');
+
+        userRows.forEach(row => {
+          const username = row.cells[1].textContent.toLowerCase();
+          const name = row.cells[2].textContent.toLowerCase();
+          const email = row.cells[3].textContent.toLowerCase();
+
+          if (username.includes(searchTerm) || name.includes(searchTerm) || email.includes(searchTerm)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    }
+  });
+</script>
+</body>
+</html>

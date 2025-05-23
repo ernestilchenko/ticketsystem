@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/layout :: head('My Tickets')"></head>
+<body>
+<nav th:replace="fragments/layout :: navbar"></nav>
+
+<div class="dashboard-container">
+  <div th:replace="fragments/layout :: sidebar-client"></div>
+
+  <div class="content-wrapper">
+    <div class="container-fluid">
+      <h1 class="mb-4">My Tickets</h1>
+
+      <div th:if="${message}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle-fill me-2"></i><span th:text="${message}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="search-tickets" placeholder="Search tickets...">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <select class="form-select" id="filter-status">
+            <option value="ALL" selected>All Statuses</option>
+            <option value="PAID">Paid</option>
+            <option value="RESERVED">Reserved</option>
+            <option value="CANCELLED">Cancelled</option>
+            <option value="USED">Used</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" th:if="${tickets != null && !tickets.empty}">
+        <div class="col-md-6 mb-4" th:each="ticket : ${tickets}">
+          <div class="card ticket-card shadow-sm">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+              <h5 class="mb-0" th:text="${ticket.event.name}">Event Name</h5>
+              <span class="badge ticket-status-badge"
+                    th:classappend="${ticket.status.name() == 'PAID' ? 'bg-success' :
+                                                      (ticket.status.name() == 'RESERVED' ? 'bg-warning' :
+                                                      (ticket.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
+                    th:text="${ticket.status}">
+                                    Status
+                                </span>
+            </div>
+            <div class="card-body">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <p class="mb-1 text-muted"><i class="bi bi-ticket-perforated me-2"></i>Ticket Number</p>
+                  <p class="mb-0 fw-bold" th:text="${ticket.ticketNumber}">TKT-12345-6789</p>
+                </div>
+                <div class="col-md-6">
+                  <p class="mb-1 text-muted"><i class="bi bi-cash me-2"></i>Price</p>
+                  <p class="mb-0 fw-bold" th:text="'$' + ${ticket.price}">$99</p>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <p class="mb-1 text-muted"><i class="bi bi-calendar-event me-2"></i>Date & Time</p>
+                  <p class="mb-0" th:text="${#temporals.format(ticket.event.eventDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</p>
+                </div>
+                <div class="col-md-6">
+                  <p class="mb-1 text-muted"><i class="bi bi-geo-alt me-2"></i>Location</p>
+                  <p class="mb-0" th:text="${ticket.event.location}">Event Location</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <p class="mb-1 text-muted"><i class="bi bi-chair me-2"></i>Seat</p>
+                  <p class="mb-0" th:text="${ticket.seatNumber}">Row 1, Seat 12</p>
+                </div>
+                <div class="col-md-6">
+                  <p class="mb-1 text-muted"><i class="bi bi-clock-history me-2"></i>Purchase Date</p>
+                  <p class="mb-0" th:text="${#temporals.format(ticket.purchaseDate, 'dd MMM yyyy')}">01 Jan 2025</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent">
+              <div class="d-flex justify-content-between">
+                <a th:href="@{/client/events/{id}(id=${ticket.event.id})}" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-info-circle me-1"></i>Event Details
+                </a>
+
+                <div class="btn-group" th:if="${ticket.status.name() == 'RESERVED'}">
+                  <form th:action="@{/client/tickets/{id}/pay(id=${ticket.id})}" method="post">
+                    <button type="submit" class="btn btn-sm btn-success me-2">
+                      <i class="bi bi-credit-card me-1"></i>Pay Now
+                    </button>
+                  </form>
+                  <form th:action="@{/client/tickets/{id}/cancel(id=${ticket.id})}" method="post">
+                    <button type="submit" class="btn btn-sm btn-danger">
+                      <i class="bi bi-x-circle me-1"></i>Cancel
+                    </button>
+                  </form>
+                </div>
+
+                <form th:if="${ticket.status.name() == 'PAID'}" th:action="@{/client/tickets/{id}/cancel(id=${ticket.id})}" method="post">
+                  <button type="submit" class="btn btn-sm btn-danger">
+                    <i class="bi bi-x-circle me-1"></i>Cancel
+                  </button>
+                </form>
+
+                <button th:if="${ticket.status.name() == 'CANCELLED' || ticket.status.name() == 'USED'}"
+                        class="btn btn-sm btn-secondary" disabled>
+                  <i class="bi bi-lock me-1"></i>No Actions Available
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center" th:if="${tickets == null || tickets.empty}">
+        <div class="alert alert-info mb-4">
+          <i class="bi bi-info-circle-fill me-2"></i>You don't have any tickets yet.
+        </div>
+        <a th:href="@{/client/events}" class="btn btn-primary">Browse Events</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Filter functionality for tickets
+    const statusFilter = document.getElementById('filter-status');
+    const searchInput = document.getElementById('search-tickets');
+    const ticketCards = document.querySelectorAll('.ticket-card');
+
+    function filterTickets() {
+      const selectedStatus = statusFilter.value;
+      const searchTerm = searchInput.value.toLowerCase();
+
+      ticketCards.forEach(card => {
+        const cardParent = card.parentElement;
+        const statusBadge = card.querySelector('.ticket-status-badge');
+        const cardStatus = statusBadge.textContent.trim();
+        const eventName = card.querySelector('.card-header h5').textContent.toLowerCase();
+        const ticketNumber = card.querySelector('.fw-bold').textContent.toLowerCase();
+
+        const statusMatch = selectedStatus === 'ALL' || cardStatus === selectedStatus;
+        const searchMatch = eventName.includes(searchTerm) || ticketNumber.includes(searchTerm);
+
+        if (statusMatch && searchMatch) {
+          cardParent.style.display = 'block';
+        } else {
+          cardParent.style.display = 'none';
+        }
+      });
+    }
+
+    if (statusFilter) {
+      statusFilter.addEventListener('change', filterTickets);
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', filterTickets);
+    }
+  });
+</script>
+</body>
+</html>
