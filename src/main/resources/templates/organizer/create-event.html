@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="fragments/layout :: head('Create Event')"></head>
+<head th:replace="~{fragments/layout :: head('Create Event')}"></head>
 <body>
-<nav th:replace="fragments/layout :: navbar"></nav>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
 <div class="dashboard-container">
-  <div th:replace="fragments/layout :: sidebar-organizer"></div>
+  <div th:replace="~{fragments/layout :: sidebar-organizer}"></div>
 
   <div class="content-wrapper">
     <div class="container-fluid">
@@ -111,6 +111,6 @@
   </div>
 </div>
 
-<footer th:replace="fragments/layout :: footer"></footer>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>

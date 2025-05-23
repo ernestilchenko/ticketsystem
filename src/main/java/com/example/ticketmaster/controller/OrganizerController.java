@@ -29,11 +29,20 @@ public class OrganizerController {
         User organizer = (User) authentication.getPrincipal();
         var myEvents = eventService.getEventsByOrganizer(organizer);
 
+        // Statistics
         model.addAttribute("myEvents", myEvents.size());
         model.addAttribute("approvedEvents", myEvents.stream()
                 .filter(e -> e.getStatus() == Event.EventStatus.APPROVED).count());
         model.addAttribute("pendingEvents", myEvents.stream()
                 .filter(e -> e.getStatus() == Event.EventStatus.PENDING_APPROVAL).count());
+
+        // Recent events (last 5 events ordered by creation date)
+        var recentEvents = myEvents.stream()
+                .sorted((e1, e2) -> e2.getCreatedAt().compareTo(e1.getCreatedAt()))
+                .limit(5)
+                .toList();
+        model.addAttribute("recentEvents", recentEvents);
+
         model.addAttribute("currentPage", "organizer-dashboard");
 
         return "organizer/dashboard";

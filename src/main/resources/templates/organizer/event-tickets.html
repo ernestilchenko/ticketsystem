@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="fragments/layout :: head('Event Tickets')"></head>
+<head th:replace="~{fragments/layout :: head('Event Tickets')}"></head>
 <body>
-<nav th:replace="fragments/layout :: navbar"></nav>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
 <div class="dashboard-container">
-  <div th:replace="fragments/layout :: sidebar-organizer"></div>
+  <div th:replace="~{fragments/layout :: sidebar-organizer}"></div>
 
   <div class="content-wrapper">
     <div class="container-fluid">
@@ -109,13 +109,13 @@
                 <td th:text="${ticket.seatNumber}">Row 1, Seat 12</td>
                 <td th:text="'$' + ${ticket.price}">$99</td>
                 <td>
-                                            <span class="badge"
-                                                  th:classappend="${ticket.status.name() == 'PAID' ? 'bg-success' :
-                                                                (ticket.status.name() == 'RESERVED' ? 'bg-warning' :
-                                                                (ticket.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
-                                                  th:text="${ticket.status}">
-                                                Status
-                                            </span>
+                  <span class="badge"
+                        th:classappend="${ticket.status.name() == 'PAID' ? 'bg-success' :
+                                      (ticket.status.name() == 'RESERVED' ? 'bg-warning' :
+                                      (ticket.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
+                        th:text="${ticket.status}">
+                    Status
+                  </span>
                 </td>
                 <td>
                   <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal"
@@ -136,11 +136,11 @@
                             <h5 th:text="${event.name}">Event Name</h5>
                             <span class="badge"
                                   th:classappend="${ticket.status.name() == 'PAID' ? 'bg-success' :
-                                                                                    (ticket.status.name() == 'RESERVED' ? 'bg-warning' :
-                                                                                    (ticket.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
+                                                            (ticket.status.name() == 'RESERVED' ? 'bg-warning' :
+                                                            (ticket.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
                                   th:text="${ticket.status}">
-                                                                    Status
-                                                                </span>
+                              Status
+                            </span>
                           </div>
 
                           <div class="mb-3">
@@ -203,7 +203,7 @@
   </div>
 </div>
 
-<footer th:replace="fragments/layout :: footer"></footer>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
