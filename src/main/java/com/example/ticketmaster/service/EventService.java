@@ -3,6 +3,8 @@ package com.example.ticketmaster.service;
 import com.example.ticketmaster.entity.Event;
 import com.example.ticketmaster.entity.User;
 import com.example.ticketmaster.repository.EventRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,8 @@ import java.util.Optional;
 @Service
 @Transactional
 public class EventService {
+
+    private static final Logger logger = LoggerFactory.getLogger(EventService.class);
 
     private final EventRepository eventRepository;
 
@@ -45,10 +49,22 @@ public class EventService {
     }
 
     public Event createEvent(Event event, User organizer) {
+        logger.debug("Creating event: {} for organizer: {}", event.getName(), organizer.getUsername());
+
         event.setOrganizer(organizer);
         event.setAvailableSeats(event.getTotalSeats());
         event.setStatus(Event.EventStatus.PENDING_APPROVAL);
-        return eventRepository.save(event);
+        event.setCreatedAt(LocalDateTime.now());
+        event.setUpdatedAt(LocalDateTime.now());
+
+        logger.debug("Event details: name={}, category={}, totalSeats={}, price={}, date={}",
+                event.getName(), event.getCategory(), event.getTotalSeats(),
+                event.getPrice(), event.getEventDate());
+
+        Event savedEvent = eventRepository.save(event);
+        logger.info("Event saved with ID: {}", savedEvent.getId());
+
+        return savedEvent;
     }
 
     public Event approveEvent(Long eventId) {
@@ -86,7 +102,6 @@ public class EventService {
         existingEvent.setPrice(event.getPrice());
         existingEvent.setCategory(event.getCategory());
 
-        // Aktualizacja dostępnych miejsc tylko jeśli zwiększamy całkowitą liczbę
         if (event.getTotalSeats() > existingEvent.getTotalSeats()) {
             int difference = event.getTotalSeats() - existingEvent.getTotalSeats();
             existingEvent.setAvailableSeats(existingEvent.getAvailableSeats() + difference);

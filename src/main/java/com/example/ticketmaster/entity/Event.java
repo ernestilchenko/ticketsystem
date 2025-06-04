@@ -32,10 +32,10 @@ public class Event {
     @Positive(message = "Price must be positive")
     private BigDecimal price;
 
-    @NotNull(message = "Available seats is required")
-    @Positive(message = "Available seats must be positive")
     private Integer availableSeats;
 
+    @NotNull(message = "Total seats is required")
+    @Positive(message = "Total seats must be positive")
     private Integer totalSeats;
 
     @Enumerated(EnumType.STRING)
@@ -54,7 +54,6 @@ public class Event {
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    // Enums
     public enum EventStatus {
         PENDING_APPROVAL, APPROVED, REJECTED, CANCELLED, COMPLETED
     }
@@ -63,7 +62,6 @@ public class Event {
         CONCERT, THEATRE, CINEMA, SPORT, CONFERENCE, OTHER
     }
 
-    // Constructors
     public Event() {}
 
     public Event(String name, String description, LocalDateTime eventDate, String location,
@@ -79,7 +77,6 @@ public class Event {
         this.organizer = organizer;
     }
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

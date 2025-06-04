@@ -5,6 +5,8 @@ import com.example.ticketmaster.entity.User;
 import com.example.ticketmaster.service.EventService;
 import com.example.ticketmaster.service.TicketService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +17,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/organizer")
 public class OrganizerController {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrganizerController.class);
 
     private final EventService eventService;
     private final TicketService ticketService;
@@ -29,14 +33,12 @@ public class OrganizerController {
         User organizer = (User) authentication.getPrincipal();
         var myEvents = eventService.getEventsByOrganizer(organizer);
 
-        // Statistics
         model.addAttribute("myEvents", myEvents.size());
         model.addAttribute("approvedEvents", myEvents.stream()
                 .filter(e -> e.getStatus() == Event.EventStatus.APPROVED).count());
         model.addAttribute("pendingEvents", myEvents.stream()
                 .filter(e -> e.getStatus() == Event.EventStatus.PENDING_APPROVAL).count());
 
-        // Recent events (last 5 events ordered by creation date)
         var recentEvents = myEvents.stream()
                 .sorted((e1, e2) -> e2.getCreatedAt().compareTo(e1.getCreatedAt()))
                 .limit(5)
@@ -69,7 +71,10 @@ public class OrganizerController {
                               Authentication authentication, Model model,
                               RedirectAttributes redirectAttributes) {
 
+        logger.debug("Creating event: {}", event.getName());
+
         if (result.hasErrors()) {
+            logger.warn("Validation errors while creating event: {}", result.getAllErrors());
             model.addAttribute("categories", Event.EventCategory.values());
             model.addAttribute("currentPage", "organizer-create-event");
             return "organizer/create-event";
@@ -77,11 +82,16 @@ public class OrganizerController {
 
         try {
             User organizer = (User) authentication.getPrincipal();
-            eventService.createEvent(event, organizer);
+            logger.debug("Creating event for organizer: {}", organizer.getUsername());
+
+            Event savedEvent = eventService.createEvent(event, organizer);
+            logger.info("Event created successfully with ID: {}", savedEvent.getId());
+
             redirectAttributes.addFlashAttribute("message",
                     "Event created successfully! It's pending approval.");
             return "redirect:/organizer/events";
         } catch (Exception e) {
+            logger.error("Failed to create event", e);
             model.addAttribute("error", "Failed to create event: " + e.getMessage());
             model.addAttribute("categories", Event.EventCategory.values());
             model.addAttribute("currentPage", "organizer-create-event");
