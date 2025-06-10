@@ -1,8 +1,10 @@
 package com.example.ticketmaster.controller;
 
+import com.example.ticketmaster.dto.EventDto;
 import com.example.ticketmaster.dto.TicketDto;
 import com.example.ticketmaster.entity.Event;
 import com.example.ticketmaster.entity.User;
+import com.example.ticketmaster.mapper.EventMapper;
 import com.example.ticketmaster.mapper.TicketMapper;
 import com.example.ticketmaster.service.EventService;
 import com.example.ticketmaster.service.TicketService;
@@ -47,7 +49,12 @@ public class ClientController {
 
     @GetMapping("/events")
     public String events(Model model) {
-        model.addAttribute("events", eventService.getAvailableEvents());
+        var events = eventService.getAvailableEvents();
+        List<EventDto> eventDtos = events.stream()
+                .map(EventMapper::toDto)
+                .toList();
+
+        model.addAttribute("events", eventDtos);
         model.addAttribute("categories", Event.EventCategory.values());
         model.addAttribute("currentPage", "client-events");
         return "client/events";
@@ -58,7 +65,8 @@ public class ClientController {
         Event event = eventService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
-        model.addAttribute("event", event);
+        EventDto eventDto = EventMapper.toDto(event);
+        model.addAttribute("event", eventDto);
         model.addAttribute("currentPage", "client-events");
         return "client/event-details";
     }

@@ -1,6 +1,7 @@
 package com.example.ticketmaster.controller;
 
 import com.example.ticketmaster.dto.CreateEventDto;
+import com.example.ticketmaster.dto.EventDto;
 import com.example.ticketmaster.dto.TicketDto;
 import com.example.ticketmaster.entity.Event;
 import com.example.ticketmaster.entity.User;
@@ -44,6 +45,7 @@ public class OrganizerController {
         var recentEvents = myEvents.stream()
                 .sorted((e1, e2) -> e2.getCreatedAt().compareTo(e1.getCreatedAt()))
                 .limit(5)
+                .map(EventMapper::toDto)
                 .toList();
         model.addAttribute("recentEvents", recentEvents);
 
@@ -55,7 +57,11 @@ public class OrganizerController {
     @GetMapping("/events")
     public String events(Authentication authentication, Model model) {
         User organizer = (User) authentication.getPrincipal();
-        model.addAttribute("events", eventService.getEventsByOrganizer(organizer));
+        var events = eventService.getEventsByOrganizer(organizer);
+        List<EventDto> eventDtos = events.stream()
+                .map(EventMapper::toDto)
+                .toList();
+        model.addAttribute("events", eventDtos);
         model.addAttribute("currentPage", "organizer-events");
         return "organizer/events";
     }
@@ -105,8 +111,9 @@ public class OrganizerController {
         }
 
         CreateEventDto createEventDto = EventMapper.toCreateDto(event);
+        EventDto eventDto = EventMapper.toDto(event);
         model.addAttribute("event", createEventDto);
-        model.addAttribute("eventEntity", event);
+        model.addAttribute("eventEntity", eventDto);
         model.addAttribute("categories", Event.EventCategory.values());
         model.addAttribute("currentPage", "organizer-events");
         return "organizer/edit-event";
@@ -120,7 +127,8 @@ public class OrganizerController {
         if (result.hasErrors()) {
             Event eventEntity = eventService.findById(id)
                     .orElseThrow(() -> new RuntimeException("Event not found"));
-            model.addAttribute("eventEntity", eventEntity);
+            EventDto eventDto = EventMapper.toDto(eventEntity);
+            model.addAttribute("eventEntity", eventDto);
             model.addAttribute("categories", Event.EventCategory.values());
             model.addAttribute("currentPage", "organizer-events");
             return "organizer/edit-event";
@@ -143,7 +151,8 @@ public class OrganizerController {
         } catch (Exception e) {
             Event eventEntity = eventService.findById(id)
                     .orElseThrow(() -> new RuntimeException("Event not found"));
-            model.addAttribute("eventEntity", eventEntity);
+            EventDto eventDto = EventMapper.toDto(eventEntity);
+            model.addAttribute("eventEntity", eventDto);
             model.addAttribute("error", "Failed to update event: " + e.getMessage());
             model.addAttribute("categories", Event.EventCategory.values());
             model.addAttribute("currentPage", "organizer-events");
@@ -166,7 +175,8 @@ public class OrganizerController {
                 .map(TicketMapper::toDto)
                 .toList();
 
-        model.addAttribute("event", event);
+        EventDto eventDto = EventMapper.toDto(event);
+        model.addAttribute("event", eventDto);
         model.addAttribute("tickets", ticketDtos);
         model.addAttribute("currentPage", "organizer-events");
         return "organizer/event-tickets";
