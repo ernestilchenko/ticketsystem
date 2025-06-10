@@ -36,9 +36,9 @@
                 <div class="mb-3">
                   <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
                   <select class="form-select" id="category" th:field="*{category}" required>
-                    <option value="">Select a category</option>
+                    <option value="" selected disabled>Select a category</option>
                     <option th:each="categoryOpt : ${categories}"
-                            th:value="${categoryOpt}"
+                            th:value="${categoryOpt.name()}"
                             th:text="${categoryOpt}">
                       CATEGORY
                     </option>
@@ -49,7 +49,8 @@
 
                 <div class="mb-3">
                   <label for="eventDate" class="form-label">Date & Time <span class="text-danger">*</span></label>
-                  <input type="datetime-local" class="form-control" id="eventDate" th:field="*{eventDate}" required>
+                  <input type="datetime-local" class="form-control" id="eventDate" th:field="*{eventDate}"
+                         placeholder="Select date and time" required>
                   <div class="invalid-feedback">Event date and time are required</div>
                   <div th:if="${#fields.hasErrors('eventDate')}" class="text-danger" th:errors="*{eventDate}"></div>
                 </div>
@@ -111,24 +112,5 @@
 </div>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const eventDateInput = document.getElementById('eventDate');
-    if (eventDateInput && !eventDateInput.value) {
-      const now = new Date();
-      now.setDate(now.getDate() + 1);
-      now.setHours(19, 0, 0, 0);
-
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-
-      eventDateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
-    }
-  });
-</script>
 </body>
 </html>

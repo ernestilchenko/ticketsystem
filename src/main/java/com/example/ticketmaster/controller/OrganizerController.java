@@ -1,12 +1,14 @@
 package com.example.ticketmaster.controller;
 
+import com.example.ticketmaster.dto.CreateEventDto;
+import com.example.ticketmaster.dto.TicketDto;
 import com.example.ticketmaster.entity.Event;
 import com.example.ticketmaster.entity.User;
+import com.example.ticketmaster.mapper.EventMapper;
+import com.example.ticketmaster.mapper.TicketMapper;
 import com.example.ticketmaster.service.EventService;
 import com.example.ticketmaster.service.TicketService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,11 +16,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/organizer")
 public class OrganizerController {
-
-    private static final Logger logger = LoggerFactory.getLogger(OrganizerController.class);
 
     private final EventService eventService;
     private final TicketService ticketService;
@@ -60,21 +62,18 @@ public class OrganizerController {
 
     @GetMapping("/events/create")
     public String createEventForm(Model model) {
-        model.addAttribute("event", new Event());
+        model.addAttribute("event", new CreateEventDto());
         model.addAttribute("categories", Event.EventCategory.values());
         model.addAttribute("currentPage", "organizer-create-event");
         return "organizer/create-event";
     }
 
     @PostMapping("/events/create")
-    public String createEvent(@Valid Event event, BindingResult result,
+    public String createEvent(@Valid @ModelAttribute("event") CreateEventDto createEventDto, BindingResult result,
                               Authentication authentication, Model model,
                               RedirectAttributes redirectAttributes) {
 
-        logger.debug("Creating event: {}", event.getName());
-
         if (result.hasErrors()) {
-            logger.warn("Validation errors while creating event: {}", result.getAllErrors());
             model.addAttribute("categories", Event.EventCategory.values());
             model.addAttribute("currentPage", "organizer-create-event");
             return "organizer/create-event";
@@ -82,16 +81,12 @@ public class OrganizerController {
 
         try {
             User organizer = (User) authentication.getPrincipal();
-            logger.debug("Creating event for organizer: {}", organizer.getUsername());
-
-            Event savedEvent = eventService.createEvent(event, organizer);
-            logger.info("Event created successfully with ID: {}", savedEvent.getId());
-
+            Event event = EventMapper.toEntity(createEventDto);
+            eventService.createEvent(event, organizer);
             redirectAttributes.addFlashAttribute("message",
                     "Event created successfully! It's pending approval.");
             return "redirect:/organizer/events";
         } catch (Exception e) {
-            logger.error("Failed to create event", e);
             model.addAttribute("error", "Failed to create event: " + e.getMessage());
             model.addAttribute("categories", Event.EventCategory.values());
             model.addAttribute("currentPage", "organizer-create-event");
@@ -109,18 +104,23 @@ public class OrganizerController {
             throw new RuntimeException("You don't have permission to edit this event");
         }
 
-        model.addAttribute("event", event);
+        CreateEventDto createEventDto = EventMapper.toCreateDto(event);
+        model.addAttribute("event", createEventDto);
+        model.addAttribute("eventEntity", event);
         model.addAttribute("categories", Event.EventCategory.values());
         model.addAttribute("currentPage", "organizer-events");
         return "organizer/edit-event";
     }
 
     @PostMapping("/events/{id}/edit")
-    public String editEvent(@PathVariable Long id, @Valid Event event, BindingResult result,
+    public String editEvent(@PathVariable Long id, @Valid @ModelAttribute("event") CreateEventDto createEventDto, BindingResult result,
                             Authentication authentication, Model model,
                             RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
+            Event eventEntity = eventService.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Event not found"));
+            model.addAttribute("eventEntity", eventEntity);
             model.addAttribute("categories", Event.EventCategory.values());
             model.addAttribute("currentPage", "organizer-events");
             return "organizer/edit-event";
@@ -135,11 +135,15 @@ public class OrganizerController {
                 throw new RuntimeException("You don't have permission to edit this event");
             }
 
+            Event event = EventMapper.toEntity(createEventDto);
             event.setId(id);
             eventService.updateEvent(event);
             redirectAttributes.addFlashAttribute("message", "Event updated successfully!");
             return "redirect:/organizer/events";
         } catch (Exception e) {
+            Event eventEntity = eventService.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Event not found"));
+            model.addAttribute("eventEntity", eventEntity);
             model.addAttribute("error", "Failed to update event: " + e.getMessage());
             model.addAttribute("categories", Event.EventCategory.values());
             model.addAttribute("currentPage", "organizer-events");
@@ -157,8 +161,13 @@ public class OrganizerController {
             throw new RuntimeException("You don't have permission to view tickets for this event");
         }
 
+        var tickets = ticketService.getTicketsByEvent(event);
+        List<TicketDto> ticketDtos = tickets.stream()
+                .map(TicketMapper::toDto)
+                .toList();
+
         model.addAttribute("event", event);
-        model.addAttribute("tickets", ticketService.getTicketsByEvent(event));
+        model.addAttribute("tickets", ticketDtos);
         model.addAttribute("currentPage", "organizer-events");
         return "organizer/event-tickets";
     }

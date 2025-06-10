@@ -26,12 +26,10 @@ public class DbInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Create roles if they don't exist
         createRoleIfNotExist("ADMIN", "Administrator with full access");
         createRoleIfNotExist("ORGANIZER", "Event organizer");
         createRoleIfNotExist("CLIENT", "Regular client");
 
-        // Create admin user if it doesn't exist
         if (!userRepository.existsByUsername("admin")) {
             User admin = new User(
                     "admin",

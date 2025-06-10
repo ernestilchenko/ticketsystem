@@ -43,11 +43,11 @@
         <div class="col-md-6 mb-4" th:each="ticket : ${tickets}">
           <div class="card ticket-card shadow-sm">
             <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
-              <h5 class="mb-0" th:text="${ticket.event.name}">Event Name</h5>
+              <h5 class="mb-0" th:text="${ticket.eventName}">Event Name</h5>
               <span class="badge ticket-status-badge"
-                    th:classappend="${ticket.status.name() == 'PAID' ? 'bg-success' :
-                                                      (ticket.status.name() == 'RESERVED' ? 'bg-warning' :
-                                                      (ticket.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
+                    th:classappend="${ticket.status == 'PAID' ? 'bg-success' :
+                                                      (ticket.status == 'RESERVED' ? 'bg-warning' :
+                                                      (ticket.status == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
                     th:text="${ticket.status}">
                                     Status
                                 </span>
@@ -66,11 +66,11 @@
               <div class="row mb-3">
                 <div class="col-md-6">
                   <p class="mb-1 text-muted"><i class="bi bi-calendar-event me-2"></i>Date & Time</p>
-                  <p class="mb-0" th:text="${#temporals.format(ticket.event.eventDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</p>
+                  <p class="mb-0" th:text="${#temporals.format(ticket.eventDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</p>
                 </div>
                 <div class="col-md-6">
                   <p class="mb-1 text-muted"><i class="bi bi-geo-alt me-2"></i>Location</p>
-                  <p class="mb-0" th:text="${ticket.event.location}">Event Location</p>
+                  <p class="mb-0" th:text="${ticket.eventLocation}">Event Location</p>
                 </div>
               </div>
               <div class="row">
@@ -86,11 +86,11 @@
             </div>
             <div class="card-footer bg-transparent">
               <div class="d-flex justify-content-between">
-                <a th:href="@{/client/events/{id}(id=${ticket.event.id})}" class="btn btn-sm btn-outline-primary">
+                <a th:href="@{/client/events/{id}(id=${ticket.eventId})}" class="btn btn-sm btn-outline-primary">
                   <i class="bi bi-info-circle me-1"></i>Event Details
                 </a>
 
-                <div class="btn-group" th:if="${ticket.status.name() == 'RESERVED'}">
+                <div class="btn-group" th:if="${ticket.status == 'RESERVED'}">
                   <form th:action="@{/client/tickets/{id}/pay(id=${ticket.id})}" method="post">
                     <button type="submit" class="btn btn-sm btn-success me-2">
                       <i class="bi bi-credit-card me-1"></i>Pay Now
@@ -103,13 +103,13 @@
                   </form>
                 </div>
 
-                <form th:if="${ticket.status.name() == 'PAID'}" th:action="@{/client/tickets/{id}/cancel(id=${ticket.id})}" method="post">
+                <form th:if="${ticket.status == 'PAID'}" th:action="@{/client/tickets/{id}/cancel(id=${ticket.id})}" method="post">
                   <button type="submit" class="btn btn-sm btn-danger">
                     <i class="bi bi-x-circle me-1"></i>Cancel
                   </button>
                 </form>
 
-                <button th:if="${ticket.status.name() == 'CANCELLED' || ticket.status.name() == 'USED'}"
+                <button th:if="${ticket.status == 'CANCELLED' || ticket.status == 'USED'}"
                         class="btn btn-sm btn-secondary" disabled>
                   <i class="bi bi-lock me-1"></i>No Actions Available
                 </button>
@@ -133,7 +133,6 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Filter functionality for tickets
     const statusFilter = document.getElementById('filter-status');
     const searchInput = document.getElementById('search-tickets');
     const ticketCards = document.querySelectorAll('.ticket-card');

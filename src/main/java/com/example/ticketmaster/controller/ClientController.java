@@ -1,7 +1,9 @@
 package com.example.ticketmaster.controller;
 
+import com.example.ticketmaster.dto.TicketDto;
 import com.example.ticketmaster.entity.Event;
 import com.example.ticketmaster.entity.User;
+import com.example.ticketmaster.mapper.TicketMapper;
 import com.example.ticketmaster.service.EventService;
 import com.example.ticketmaster.service.TicketService;
 import org.springframework.security.core.Authentication;
@@ -9,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/client")
@@ -27,8 +31,12 @@ public class ClientController {
         User client = (User) authentication.getPrincipal();
         var myTickets = ticketService.getTicketsByUser(client);
 
-        model.addAttribute("totalTickets", myTickets.size());
-        model.addAttribute("recentTickets", myTickets.stream()
+        List<TicketDto> ticketDtos = myTickets.stream()
+                .map(TicketMapper::toDto)
+                .toList();
+
+        model.addAttribute("totalTickets", ticketDtos.size());
+        model.addAttribute("recentTickets", ticketDtos.stream()
                 .limit(5)
                 .toList());
         model.addAttribute("availableEvents", eventService.getAvailableEvents().size());
@@ -110,7 +118,13 @@ public class ClientController {
     @GetMapping("/tickets")
     public String tickets(Authentication authentication, Model model) {
         User client = (User) authentication.getPrincipal();
-        model.addAttribute("tickets", ticketService.getTicketsByUser(client));
+        var myTickets = ticketService.getTicketsByUser(client);
+
+        List<TicketDto> ticketDtos = myTickets.stream()
+                .map(TicketMapper::toDto)
+                .toList();
+
+        model.addAttribute("tickets", ticketDtos);
         model.addAttribute("currentPage", "client-tickets");
         return "client/tickets";
     }

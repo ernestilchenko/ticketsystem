@@ -1,5 +1,7 @@
 package com.example.ticketmaster.controller;
 
+import com.example.ticketmaster.dto.UserDto;
+import com.example.ticketmaster.mapper.UserMapper;
 import com.example.ticketmaster.service.EventService;
 import com.example.ticketmaster.service.TicketService;
 import com.example.ticketmaster.service.UserService;
@@ -7,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -37,7 +41,12 @@ public class AdminController {
 
     @GetMapping("/users")
     public String users(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
+        var users = userService.getAllUsers();
+        List<UserDto> userDtos = users.stream()
+                .map(UserMapper::toDto)
+                .toList();
+
+        model.addAttribute("users", userDtos);
         model.addAttribute("currentPage", "admin-users");
         return "admin/users";
     }

@@ -102,17 +102,17 @@
               <tbody>
               <tr th:each="ticket : ${tickets}"
                   th:data-status="${ticket.status}"
-                  th:data-customer="${ticket.user.firstName + ' ' + ticket.user.lastName}">
+                  th:data-customer="${ticket.userName}">
                 <td th:text="${ticket.ticketNumber}">TKT-12345-6789</td>
-                <td th:text="${ticket.user.firstName + ' ' + ticket.user.lastName}">John Doe</td>
+                <td th:text="${ticket.userName}">John Doe</td>
                 <td th:text="${#temporals.format(ticket.purchaseDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</td>
                 <td th:text="${ticket.seatNumber}">Row 1, Seat 12</td>
                 <td th:text="'$' + ${ticket.price}">$99</td>
                 <td>
                   <span class="badge"
-                        th:classappend="${ticket.status.name() == 'PAID' ? 'bg-success' :
-                                      (ticket.status.name() == 'RESERVED' ? 'bg-warning' :
-                                      (ticket.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
+                        th:classappend="${ticket.status == 'PAID' ? 'bg-success' :
+                                      (ticket.status == 'RESERVED' ? 'bg-warning' :
+                                      (ticket.status == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
                         th:text="${ticket.status}">
                     Status
                   </span>
@@ -123,7 +123,6 @@
                     <i class="bi bi-eye"></i>
                   </button>
 
-                  <!-- Ticket Details Modal -->
                   <div class="modal fade" th:id="'ticketDetailsModal' + ${ticket.id}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
@@ -135,9 +134,9 @@
                           <div class="mb-4 text-center">
                             <h5 th:text="${event.name}">Event Name</h5>
                             <span class="badge"
-                                  th:classappend="${ticket.status.name() == 'PAID' ? 'bg-success' :
-                                                            (ticket.status.name() == 'RESERVED' ? 'bg-warning' :
-                                                            (ticket.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
+                                  th:classappend="${ticket.status == 'PAID' ? 'bg-success' :
+                                                            (ticket.status == 'RESERVED' ? 'bg-warning' :
+                                                            (ticket.status == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
                                   th:text="${ticket.status}">
                               Status
                             </span>
@@ -170,15 +169,11 @@
                             <ul class="list-group list-group-flush">
                               <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span>Name</span>
-                                <span class="text-muted" th:text="${ticket.user.firstName + ' ' + ticket.user.lastName}">John Doe</span>
+                                <span class="text-muted" th:text="${ticket.userName}">John Doe</span>
                               </li>
                               <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span>Email</span>
-                                <span class="text-muted" th:text="${ticket.user.email}">john.doe@example.com</span>
-                              </li>
-                              <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>Username</span>
-                                <span class="text-muted" th:text="${ticket.user.username}">johndoe</span>
+                                <span class="text-muted" th:text="${ticket.userEmail}">john.doe@example.com</span>
                               </li>
                             </ul>
                           </div>
@@ -207,7 +202,6 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Filter and search functionality
     const searchInput = document.getElementById('search-tickets');
     const statusFilter = document.getElementById('filter-status');
     const ticketRows = document.querySelectorAll('tbody tr');

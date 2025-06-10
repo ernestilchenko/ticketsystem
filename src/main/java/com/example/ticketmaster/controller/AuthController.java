@@ -1,6 +1,8 @@
 package com.example.ticketmaster.controller;
 
+import com.example.ticketmaster.dto.UserRegistrationDto;
 import com.example.ticketmaster.entity.User;
+import com.example.ticketmaster.mapper.UserMapper;
 import com.example.ticketmaster.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -37,12 +40,12 @@ public class AuthController {
 
     @GetMapping("/register")
     public String registerPage(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("user", new UserRegistrationDto());
         return "auth/register";
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid User user, BindingResult result,
+    public String registerUser(@Valid @ModelAttribute("user") UserRegistrationDto userDto, BindingResult result,
                                @RequestParam("roleType") String roleType,
                                Model model, RedirectAttributes redirectAttributes) {
 
@@ -51,12 +54,12 @@ public class AuthController {
         }
 
         try {
-            // Domyślnie wszyscy nowi użytkownicy są klientami
             String role = "CLIENT";
             if ("organizer".equals(roleType)) {
                 role = "ORGANIZER";
             }
 
+            User user = UserMapper.toEntity(userDto);
             userService.registerUser(user, role);
             redirectAttributes.addFlashAttribute("message",
                     "Registration successful! You can now log in.");

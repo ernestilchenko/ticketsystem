@@ -90,20 +90,20 @@
                   </thead>
                   <tbody>
                   <tr th:each="ticket : ${recentTickets}">
-                    <td th:text="${ticket.event.name}">Event Name</td>
-                    <td th:text="${#temporals.format(ticket.event.eventDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025</td>
+                    <td th:text="${ticket.eventName}">Event Name</td>
+                    <td th:text="${#temporals.format(ticket.eventDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025</td>
                     <td th:text="'$' + ${ticket.price}">$99</td>
                     <td>
                       <span class="badge"
-                            th:classappend="${ticket.status.name() == 'PAID' ? 'bg-success' :
-                                            (ticket.status.name() == 'RESERVED' ? 'bg-warning' :
-                                            (ticket.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
+                            th:classappend="${ticket.status == 'PAID' ? 'bg-success' :
+                                            (ticket.status == 'RESERVED' ? 'bg-warning' :
+                                            (ticket.status == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
                             th:text="${ticket.status}">
                         Status
                       </span>
                     </td>
                     <td>
-                      <a th:href="@{/client/events/{id}(id=${ticket.event.id})}" class="btn btn-sm btn-outline-primary">
+                      <a th:href="@{/client/events/{id}(id=${ticket.eventId})}" class="btn btn-sm btn-outline-primary">
                         <i class="bi bi-eye"></i>
                       </a>
                     </td>
