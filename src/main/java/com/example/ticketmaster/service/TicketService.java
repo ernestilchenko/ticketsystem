@@ -39,7 +39,12 @@ public class TicketService {
     }
 
     public Ticket purchaseTicket(Event event, User user, String seatNumber) {
-        // Sprawdź czy jest dostępne miejsce
+        // Sprawdź czy miejsce nie jest już zajęte
+        if (isSeatOccupied(event, seatNumber)) {
+            throw new RuntimeException("Seat " + seatNumber + " is already occupied");
+        }
+
+        // Sprawdź czy są dostępne miejsca
         if (!eventService.reserveSeat(event.getId())) {
             throw new RuntimeException("No available seats for this event");
         }
@@ -56,6 +61,11 @@ public class TicketService {
     }
 
     public Ticket reserveTicket(Event event, User user, String seatNumber) {
+        // Sprawdź czy miejsce nie jest już zajęte
+        if (isSeatOccupied(event, seatNumber)) {
+            throw new RuntimeException("Seat " + seatNumber + " is already occupied");
+        }
+
         if (!eventService.reserveSeat(event.getId())) {
             throw new RuntimeException("No available seats for this event");
         }
@@ -121,4 +131,14 @@ public class TicketService {
             ticketRepository.deleteById(id);
         }
     }
+        // Dodaj te metody do TicketService.java
+
+    public boolean isSeatOccupied(Event event, String seatNumber) {
+        List<Ticket> tickets = ticketRepository.findByEvent(event);
+        return tickets.stream()
+                .anyMatch(ticket -> ticket.getSeatNumber().equals(seatNumber) 
+                        && ticket.getStatus() != Ticket.TicketStatus.CANCELLED);
+    }
+
+    
 }

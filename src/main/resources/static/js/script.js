@@ -98,46 +98,192 @@ document.addEventListener('DOMContentLoaded', function() {
     const seatSelection = document.getElementById('seat-selection');
     if (seatSelection) {
         const availableSeats = parseInt(seatSelection.getAttribute('data-available-seats') || 0);
+        const totalSeats = parseInt(seatSelection.getAttribute('data-total-seats') || 0);
+        const eventId = seatSelection.getAttribute('data-event-id');
         const seatContainer = document.getElementById('seat-container');
 
-        if (seatContainer && availableSeats > 0) {
-            let seatRows = Math.ceil(Math.sqrt(availableSeats));
-            let seatsPerRow = Math.ceil(availableSeats / seatRows);
+        if (seatContainer && totalSeats > 0) {
+            // Pobierz zajęte miejsca z serwera
+            fetchOccupiedSeats(eventId).then(occupiedSeats => {
+                generateSeatMap(totalSeats, occupiedSeats, seatContainer);
+            });
+        }
+    }
 
-            // Create visual seat map
-            for (let row = 0; row < seatRows; row++) {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'd-flex justify-content-center my-2';
+    // Funkcja pobierająca zajęte miejsca z serwera
+    async function fetchOccupiedSeats(eventId) {
+        try {
+            const response = await fetch(`/api/events/${eventId}/occupied-seats`);
+            if (response.ok) {
+                return await response.json();
+            }
+        } catch (error) {
+            console.error('Error fetching occupied seats:', error);
+        }
+        return [];
+    }
 
-                for (let seat = 0; seat < seatsPerRow; seat++) {
-                    const seatNum = row * seatsPerRow + seat + 1;
-                    if (seatNum <= availableSeats) {
-                        const seatBtn = document.createElement('button');
-                        seatBtn.type = 'button';
-                        seatBtn.className = 'btn btn-outline-primary seat-btn m-1';
-                        seatBtn.setAttribute('data-seat', `Row ${row+1}, Seat ${seat+1}`);
-                        seatBtn.innerHTML = `<i class="bi bi-square"></i>`;
-                        seatBtn.style.width = '40px';
-                        seatBtn.style.height = '40px';
+    // Funkcja generująca mapę miejsc
+    function generateSeatMap(totalSeats, occupiedSeats, container) {
+        container.innerHTML = ''; // Wyczyść kontener
+        
+        let seatRows = Math.ceil(Math.sqrt(totalSeats));
+        let seatsPerRow = Math.ceil(totalSeats / seatRows);
 
+        // Utwórz legendę
+        const legend = document.createElement('div');
+        legend.className = 'mb-3 text-center';
+        legend.innerHTML = `
+            <div class="d-flex justify-content-center gap-3">
+                <span><i class="bi bi-square text-success"></i> Dostępne</span>
+                <span><i class="bi bi-square-fill text-primary"></i> Wybrane</span>
+                <span><i class="bi bi-square-fill text-danger"></i> Zajęte</span>
+            </div>
+        `;
+        container.appendChild(legend);
+
+        // Generuj rzędy miejsc
+        for (let row = 0; row < seatRows; row++) {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'd-flex justify-content-center my-2';
+            
+            // Dodaj numer rzędu
+            const rowLabel = document.createElement('div');
+            rowLabel.className = 'align-self-center me-2 fw-bold text-muted';
+            rowLabel.textContent = `${row + 1}`;
+            rowLabel.style.width = '20px';
+            rowDiv.appendChild(rowLabel);
+
+            for (let seat = 0; seat < seatsPerRow; seat++) {
+                const seatNum = row * seatsPerRow + seat + 1;
+                if (seatNum <= totalSeats) {
+                    const seatId = `Row ${row + 1}, Seat ${seat + 1}`;
+                    const isOccupied = occupiedSeats.includes(seatId);
+                    
+                    const seatBtn = document.createElement('button');
+                    seatBtn.type = 'button';
+                    seatBtn.className = 'btn seat-btn m-1';
+                    seatBtn.setAttribute('data-seat', seatId);
+                    seatBtn.style.width = '40px';
+                    seatBtn.style.height = '40px';
+                    seatBtn.style.fontSize = '12px';
+                    seatBtn.textContent = seat + 1;
+
+                    if (isOccupied) {
+                        // Miejsce zajęte
+                        seatBtn.className += ' btn-danger';
+                        seatBtn.disabled = true;
+                        seatBtn.setAttribute('data-bs-toggle', 'tooltip');
+                        seatBtn.setAttribute('data-bs-title', 'Miejsce zajęte');
+                    } else {
+                        // Miejsce dostępne
+                        seatBtn.className += ' btn-outline-success';
+                        
                         seatBtn.addEventListener('click', function() {
-                            document.querySelectorAll('.seat-btn').forEach(btn => {
-                                btn.classList.remove('active');
-                                btn.innerHTML = `<i class="bi bi-square"></i>`;
+                            // Usuń wybór z innych miejsc
+                            document.querySelectorAll('.seat-btn:not(.btn-danger)').forEach(btn => {
+                                btn.classList.remove('btn-primary', 'active');
+                                btn.classList.add('btn-outline-success');
                             });
 
-                            this.classList.add('active');
-                            this.innerHTML = `<i class="bi bi-check-square-fill"></i>`;
+                            // Wybierz to miejsce
+                            this.classList.remove('btn-outline-success');
+                            this.classList.add('btn-primary', 'active');
 
-                            document.getElementById('seatNumber').value = this.getAttribute('data-seat');
+                            // Ustaw wartość w ukrytym polu
+                            const seatInput = document.getElementById('seatNumber');
+                            if (seatInput) {
+                                seatInput.value = this.getAttribute('data-seat');
+                            }
                         });
-
-                        rowDiv.appendChild(seatBtn);
                     }
-                }
 
-                seatContainer.appendChild(rowDiv);
+                    rowDiv.appendChild(seatBtn);
+                }
             }
+
+            container.appendChild(rowDiv);
+        }
+
+        // Inicjalizuj tooltips dla zajętych miejsc
+        const tooltips = container.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltips.forEach(tooltip => {
+            new bootstrap.Tooltip(tooltip);
+        });
+    }
+
+    // Walidacja formularza przed wysłaniem
+    const purchaseForm = document.querySelector('form[action*="/purchase"]');
+    const reserveForm = document.querySelector('form[action*="/reserve"]');
+    
+    if (purchaseForm) {
+        purchaseForm.addEventListener('submit', function(e) {
+            const seatInput = document.getElementById('seatNumber');
+            const selectedSeat = seatInput ? seatInput.value : '';
+            
+            if (!selectedSeat || selectedSeat === 'General Admission') {
+                // Jeśli nie wybrano miejsca, użyj General Admission
+                if (seatInput) {
+                    seatInput.value = 'General Admission';
+                }
+                return true;
+            }
+            
+            // Sprawdź czy miejsce jest nadal dostępne
+            e.preventDefault();
+            checkSeatAndSubmit(this, selectedSeat);
+        });
+    }
+    
+    if (reserveForm) {
+        reserveForm.addEventListener('submit', function(e) {
+            const seatInput = document.getElementById('seatNumber');
+            const selectedSeat = seatInput ? seatInput.value : '';
+            
+            if (!selectedSeat || selectedSeat === 'General Admission') {
+                if (seatInput) {
+                    seatInput.value = 'General Admission';
+                }
+                return true;
+            }
+            
+            e.preventDefault();
+            checkSeatAndSubmit(this, selectedSeat);
+        });
+    }
+    
+    async function checkSeatAndSubmit(form, seatNumber) {
+        const eventId = document.getElementById('seat-selection')?.getAttribute('data-event-id');
+        
+        if (!eventId) {
+            form.submit();
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/events/${eventId}/check-seat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(seatNumber)
+            });
+            
+            if (response.ok) {
+                const isAvailable = await response.json();
+                if (isAvailable) {
+                    form.submit();
+                } else {
+                    alert('Wybrane miejsce zostało właśnie zajęte przez innego użytkownika. Proszę wybrać inne miejsce.');
+                    // Odśwież mapę miejsc
+                    location.reload();
+                }
+            } else {
+                form.submit(); // W przypadku błędu API, spróbuj normalnie
+            }
+        } catch (error) {
+            console.error('Error checking seat availability:', error);
+            form.submit(); // W przypadku błędu, spróbuj normalnie
         }
     }
 });

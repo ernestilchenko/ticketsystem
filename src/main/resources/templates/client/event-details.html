@@ -71,9 +71,14 @@
                         <input type="text" class="form-control" id="seatNumber" name="seatNumber" placeholder="General Admission">
                       </div>
                     
-                      <div id="seat-selection" th:data-available-seats="${event.availableSeats}">
-                        <p>Select your seat:</p>
-                        <div id="seat-container" class="mb-3 text-center"></div>
+                      <div id="seat-selection" 
+                          th:data-available-seats="${event.availableSeats}"
+                          th:data-total-seats="${event.totalSeats}"
+                          th:data-event-id="${event.id}">
+                        <p>Wybierz swoje miejsce:</p>
+                        <div id="seat-container" class="mb-3 text-center">
+                          <!-- Miejsca będą generowane przez JavaScript -->
+                        </div>
                       </div>
                     
                       <div class="d-grid gap-2">
