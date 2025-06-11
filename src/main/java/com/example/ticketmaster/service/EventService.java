@@ -1,5 +1,6 @@
 package com.example.ticketmaster.service;
 
+import com.example.ticketmaster.dto.CreateEventDto;
 import com.example.ticketmaster.dto.EventDto;
 import com.example.ticketmaster.entity.Event;
 import com.example.ticketmaster.entity.User;
@@ -89,6 +90,12 @@ public class EventService {
         return savedEvent;
     }
 
+    public EventDto createEventDto(CreateEventDto createEventDto, User organizer) {
+        Event event = EventMapper.toEntity(createEventDto);
+        Event savedEvent = createEvent(event, organizer);
+        return EventMapper.toDto(savedEvent);
+    }
+
     public Event approveEvent(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
@@ -129,8 +136,16 @@ public class EventService {
             existingEvent.setAvailableSeats(existingEvent.getAvailableSeats() + difference);
         }
         existingEvent.setTotalSeats(event.getTotalSeats());
+        existingEvent.setUpdatedAt(LocalDateTime.now());
 
         return eventRepository.save(existingEvent);
+    }
+
+    public EventDto updateEventDto(Long id, CreateEventDto createEventDto) {
+        Event event = EventMapper.toEntity(createEventDto);
+        event.setId(id);
+        Event updatedEvent = updateEvent(event);
+        return EventMapper.toDto(updatedEvent);
     }
 
     public boolean reserveSeat(Long eventId) {
