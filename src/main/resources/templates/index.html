@@ -24,7 +24,6 @@
     <div class="col-md-4 mb-4" th:each="event : ${events}" th:if="${eventStat.index < 6}">
       <div class="card event-highlight h-100">
         <div class="position-relative">
-          <img class="card-img-top" th:src="@{/images/event-placeholder.jpg}" alt="Event image" style="height: 200px; object-fit: cover;">
           <span class="badge bg-primary event-badge" th:text="${event.category}">CONCERT</span>
         </div>
         <div class="card-body">

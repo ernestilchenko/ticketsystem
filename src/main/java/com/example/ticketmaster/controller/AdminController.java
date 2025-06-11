@@ -2,7 +2,6 @@ package com.example.ticketmaster.controller;
 
 import com.example.ticketmaster.dto.EventDto;
 import com.example.ticketmaster.dto.UserDto;
-import com.example.ticketmaster.mapper.EventMapper;
 import com.example.ticketmaster.mapper.UserMapper;
 import com.example.ticketmaster.service.EventService;
 import com.example.ticketmaster.service.TicketService;
@@ -30,15 +29,12 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        var pendingEvents = eventService.getPendingEvents();
-        List<EventDto> pendingEventDtos = pendingEvents.stream()
-                .map(EventMapper::toDto)
-                .toList();
+        List<EventDto> pendingEventsList = eventService.getPendingEventsDto();
 
         model.addAttribute("totalUsers", userService.getAllUsers().size());
-        model.addAttribute("totalEvents", eventService.getAllEvents().size());
-        model.addAttribute("pendingEvents", pendingEvents.size());
-        model.addAttribute("pendingEventsList", pendingEventDtos);
+        model.addAttribute("totalEvents", eventService.getAllEventsDto().size());
+        model.addAttribute("pendingEvents", pendingEventsList.size());
+        model.addAttribute("pendingEventsList", pendingEventsList);
         model.addAttribute("totalTickets", ticketService.getAllTickets().size());
         model.addAttribute("currentPage", "admin-dashboard");
         return "admin/dashboard";
@@ -58,19 +54,8 @@ public class AdminController {
 
     @GetMapping("/events")
     public String events(Model model) {
-        var allEvents = eventService.getAllEvents();
-        var pendingEvents = eventService.getPendingEvents();
-
-        List<EventDto> allEventDtos = allEvents.stream()
-                .map(EventMapper::toDto)
-                .toList();
-
-        List<EventDto> pendingEventDtos = pendingEvents.stream()
-                .map(EventMapper::toDto)
-                .toList();
-
-        model.addAttribute("events", allEventDtos);
-        model.addAttribute("pendingEvents", pendingEventDtos);
+        model.addAttribute("events", eventService.getAllEventsDto());
+        model.addAttribute("pendingEvents", eventService.getPendingEventsDto());
         model.addAttribute("currentPage", "admin-events");
         return "admin/events";
     }

@@ -4,6 +4,8 @@ import com.example.ticketmaster.dto.CreateEventDto;
 import com.example.ticketmaster.dto.EventDto;
 import com.example.ticketmaster.entity.Event;
 
+import java.util.List;
+
 public class EventMapper {
 
     public static Event toEntity(EventDto dto) {
@@ -14,8 +16,12 @@ public class EventMapper {
         event.setEventDate(dto.getEventDate());
         event.setLocation(dto.getLocation());
         event.setPrice(dto.getPrice());
+        event.setAvailableSeats(dto.getAvailableSeats());
         event.setTotalSeats(dto.getTotalSeats());
         event.setCategory(dto.getCategory());
+        event.setStatus(dto.getStatus());
+        event.setCreatedAt(dto.getCreatedAt());
+        event.setUpdatedAt(dto.getUpdatedAt());
         return event;
     }
 
@@ -27,8 +33,15 @@ public class EventMapper {
         dto.setEventDate(event.getEventDate());
         dto.setLocation(event.getLocation());
         dto.setPrice(event.getPrice());
+        dto.setAvailableSeats(event.getAvailableSeats());
         dto.setTotalSeats(event.getTotalSeats());
         dto.setCategory(event.getCategory());
+        dto.setStatus(event.getStatus());
+        dto.setCreatedAt(event.getCreatedAt());
+        dto.setUpdatedAt(event.getUpdatedAt());
+        if (event.getOrganizer() != null) {
+            dto.setOrganizerName(event.getOrganizer().getFirstName() + " " + event.getOrganizer().getLastName());
+        }
         return dto;
     }
 
@@ -54,5 +67,9 @@ public class EventMapper {
         dto.setTotalSeats(event.getTotalSeats());
         dto.setCategory(event.getCategory().name());
         return dto;
+    }
+
+    public static List<EventDto> toDtoList(List<Event> events) {
+        return events.stream().map(EventMapper::toDto).toList();
     }
 }

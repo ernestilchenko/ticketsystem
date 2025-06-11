@@ -4,7 +4,6 @@ import com.example.ticketmaster.dto.EventDto;
 import com.example.ticketmaster.dto.TicketDto;
 import com.example.ticketmaster.entity.Event;
 import com.example.ticketmaster.entity.User;
-import com.example.ticketmaster.mapper.EventMapper;
 import com.example.ticketmaster.mapper.TicketMapper;
 import com.example.ticketmaster.service.EventService;
 import com.example.ticketmaster.service.TicketService;
@@ -41,7 +40,7 @@ public class ClientController {
         model.addAttribute("recentTickets", ticketDtos.stream()
                 .limit(5)
                 .toList());
-        model.addAttribute("availableEvents", eventService.getAvailableEvents().size());
+        model.addAttribute("availableEvents", eventService.getAvailableEventsDto().size());
         model.addAttribute("currentPage", "client-dashboard");
 
         return "client/dashboard";
@@ -49,12 +48,7 @@ public class ClientController {
 
     @GetMapping("/events")
     public String events(Model model) {
-        var events = eventService.getAvailableEvents();
-        List<EventDto> eventDtos = events.stream()
-                .map(EventMapper::toDto)
-                .toList();
-
-        model.addAttribute("events", eventDtos);
+        model.addAttribute("events", eventService.getAvailableEventsDto());
         model.addAttribute("categories", Event.EventCategory.values());
         model.addAttribute("currentPage", "client-events");
         return "client/events";
@@ -62,11 +56,10 @@ public class ClientController {
 
     @GetMapping("/events/{id}")
     public String eventDetails(@PathVariable Long id, Model model) {
-        Event event = eventService.findById(id)
+        EventDto event = eventService.findByIdDto(id)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
-        EventDto eventDto = EventMapper.toDto(event);
-        model.addAttribute("event", eventDto);
+        model.addAttribute("event", event);
         model.addAttribute("currentPage", "client-events");
         return "client/event-details";
     }

@@ -34,7 +34,7 @@ public class OrganizerController {
     @GetMapping("/dashboard")
     public String dashboard(Authentication authentication, Model model) {
         User organizer = (User) authentication.getPrincipal();
-        var myEvents = eventService.getEventsByOrganizer(organizer);
+        var myEvents = eventService.getEventsByOrganizerDto(organizer);
 
         model.addAttribute("myEvents", myEvents.size());
         model.addAttribute("approvedEvents", myEvents.stream()
@@ -45,7 +45,6 @@ public class OrganizerController {
         var recentEvents = myEvents.stream()
                 .sorted((e1, e2) -> e2.getCreatedAt().compareTo(e1.getCreatedAt()))
                 .limit(5)
-                .map(EventMapper::toDto)
                 .toList();
         model.addAttribute("recentEvents", recentEvents);
 
@@ -57,11 +56,7 @@ public class OrganizerController {
     @GetMapping("/events")
     public String events(Authentication authentication, Model model) {
         User organizer = (User) authentication.getPrincipal();
-        var events = eventService.getEventsByOrganizer(organizer);
-        List<EventDto> eventDtos = events.stream()
-                .map(EventMapper::toDto)
-                .toList();
-        model.addAttribute("events", eventDtos);
+        model.addAttribute("events", eventService.getEventsByOrganizerDto(organizer));
         model.addAttribute("currentPage", "organizer-events");
         return "organizer/events";
     }
@@ -125,9 +120,8 @@ public class OrganizerController {
                             RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
-            Event eventEntity = eventService.findById(id)
+            EventDto eventDto = eventService.findByIdDto(id)
                     .orElseThrow(() -> new RuntimeException("Event not found"));
-            EventDto eventDto = EventMapper.toDto(eventEntity);
             model.addAttribute("eventEntity", eventDto);
             model.addAttribute("categories", Event.EventCategory.values());
             model.addAttribute("currentPage", "organizer-events");
@@ -149,9 +143,8 @@ public class OrganizerController {
             redirectAttributes.addFlashAttribute("message", "Event updated successfully!");
             return "redirect:/organizer/events";
         } catch (Exception e) {
-            Event eventEntity = eventService.findById(id)
+            EventDto eventDto = eventService.findByIdDto(id)
                     .orElseThrow(() -> new RuntimeException("Event not found"));
-            EventDto eventDto = EventMapper.toDto(eventEntity);
             model.addAttribute("eventEntity", eventDto);
             model.addAttribute("error", "Failed to update event: " + e.getMessage());
             model.addAttribute("categories", Event.EventCategory.values());

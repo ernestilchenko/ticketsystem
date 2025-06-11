@@ -1,7 +1,9 @@
 package com.example.ticketmaster.service;
 
+import com.example.ticketmaster.dto.EventDto;
 import com.example.ticketmaster.entity.Event;
 import com.example.ticketmaster.entity.User;
+import com.example.ticketmaster.mapper.EventMapper;
 import com.example.ticketmaster.repository.EventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,20 +30,40 @@ public class EventService {
         return eventRepository.findAll();
     }
 
+    public List<EventDto> getAllEventsDto() {
+        return EventMapper.toDtoList(eventRepository.findAll());
+    }
+
     public List<Event> getAvailableEvents() {
         return eventRepository.findAvailableEvents(LocalDateTime.now());
+    }
+
+    public List<EventDto> getAvailableEventsDto() {
+        return EventMapper.toDtoList(eventRepository.findAvailableEvents(LocalDateTime.now()));
     }
 
     public List<Event> getEventsByOrganizer(User organizer) {
         return eventRepository.findByOrganizer(organizer);
     }
 
+    public List<EventDto> getEventsByOrganizerDto(User organizer) {
+        return EventMapper.toDtoList(eventRepository.findByOrganizer(organizer));
+    }
+
     public List<Event> getPendingEvents() {
         return eventRepository.findByStatus(Event.EventStatus.PENDING_APPROVAL);
     }
 
+    public List<EventDto> getPendingEventsDto() {
+        return EventMapper.toDtoList(eventRepository.findByStatus(Event.EventStatus.PENDING_APPROVAL));
+    }
+
     public Optional<Event> findById(Long id) {
         return eventRepository.findById(id);
+    }
+
+    public Optional<EventDto> findByIdDto(Long id) {
+        return eventRepository.findById(id).map(EventMapper::toDto);
     }
 
     public Event saveEvent(Event event) {
