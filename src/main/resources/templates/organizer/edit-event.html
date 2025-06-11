@@ -9,6 +9,10 @@
 
   <div class="content-wrapper">
     <div class="container-fluid">
+      <!--/*@thymesVar id="event" type="com.example.ticketmaster.dto.CreateEventDto"*/-->
+      <!--/*@thymesVar id="eventDto" type="com.example.ticketmaster.dto.EventDto"*/-->
+      <!--/*@thymesVar id="categories" type="com.example.ticketmaster.entity.Event.EventCategory[]"*/-->
+      <!--/*@thymesVar id="error" type="java.lang.String"*/-->
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="mb-0">Edit Event</h1>
         <a th:href="@{/organizer/events}" class="btn btn-outline-primary">
@@ -23,7 +27,7 @@
 
       <div class="card shadow-sm">
         <div class="card-body">
-          <form th:action="@{/organizer/events/{id}/edit(id=${eventEntity.id})}" th:object="${event}" method="post" class="needs-validation" novalidate>
+          <form th:action="@{/organizer/events/{id}/edit(id=${eventDto.id})}" th:object="${event}" method="post" class="needs-validation" novalidate>
             <div class="row mb-4">
               <div class="col-md-6">
                 <div class="mb-3">
@@ -80,7 +84,7 @@
                   <div class="invalid-feedback">Number of seats is required</div>
                   <div th:if="${#fields.hasErrors('totalSeats')}" class="text-danger" th:errors="*{totalSeats}"></div>
                   <small class="form-text text-muted">
-                    Current availability: <span th:text="${eventEntity.availableSeats}">0</span> seats available
+                    Current availability: <span th:text="${eventDto.availableSeats}">0</span> seats available
                   </small>
                 </div>
 
@@ -104,24 +108,24 @@
                       <div class="col-md-3">
                         <p class="mb-1"><strong>Current Status:</strong></p>
                         <span class="badge"
-                              th:classappend="${eventEntity.status.name() == 'APPROVED' ? 'bg-success' :
-                                              (eventEntity.status.name() == 'PENDING_APPROVAL' ? 'bg-warning' :
-                                              (eventEntity.status.name() == 'REJECTED' ? 'bg-danger' : 'bg-info'))}"
-                              th:text="${eventEntity.status}">
+                              th:classappend="${eventDto.status.name() == 'APPROVED' ? 'bg-success' :
+                                              (eventDto.status.name() == 'PENDING_APPROVAL' ? 'bg-warning' :
+                                              (eventDto.status.name() == 'REJECTED' ? 'bg-danger' : 'bg-info'))}"
+                              th:text="${eventDto.status}">
                           Status
                         </span>
                       </div>
                       <div class="col-md-3">
                         <p class="mb-1"><strong>Seats Sold:</strong></p>
-                        <p class="mb-0" th:text="${eventEntity.totalSeats - eventEntity.availableSeats}">0</p>
+                        <p class="mb-0" th:text="${eventDto.totalSeats - eventDto.availableSeats}">0</p>
                       </div>
                       <div class="col-md-3">
                         <p class="mb-1"><strong>Created:</strong></p>
-                        <p class="mb-0" th:text="${#temporals.format(eventEntity.createdAt, 'dd MMM yyyy')}">01 Jan 2025</p>
+                        <p class="mb-0" th:text="${#temporals.format(eventDto.createdAt, 'dd MMM yyyy')}">01 Jan 2025</p>
                       </div>
                       <div class="col-md-3">
                         <p class="mb-1"><strong>Last Updated:</strong></p>
-                        <p class="mb-0" th:text="${#temporals.format(eventEntity.updatedAt, 'dd MMM yyyy')}">01 Jan 2025</p>
+                        <p class="mb-0" th:text="${#temporals.format(eventDto.updatedAt, 'dd MMM yyyy')}">01 Jan 2025</p>
                       </div>
                     </div>
                   </div>
@@ -130,13 +134,13 @@
             </div>
 
             <!-- Warning for approved events -->
-            <div class="alert alert-warning mb-4" th:if="${eventEntity.status.name() == 'APPROVED'}">
+            <div class="alert alert-warning mb-4" th:if="${eventDto.status.name() == 'APPROVED'}">
               <i class="bi bi-exclamation-triangle-fill me-2"></i>
               <strong>Note:</strong> This event is already approved. Some changes may require re-approval by an administrator.
             </div>
 
             <!-- Warning for events with sold tickets -->
-            <div class="alert alert-info mb-4" th:if="${(eventEntity.totalSeats - eventEntity.availableSeats) > 0}">
+            <div class="alert alert-info mb-4" th:if="${(eventDto.totalSeats - eventDto.availableSeats) > 0}">
               <i class="bi bi-info-circle-fill me-2"></i>
               <strong>Important:</strong> This event has sold tickets. Be careful when modifying seat capacity.
             </div>

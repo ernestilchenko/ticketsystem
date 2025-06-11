@@ -96,18 +96,19 @@ public class OrganizerController {
 
     @GetMapping("/events/{id}/edit")
     public String editEventForm(@PathVariable Long id, Authentication authentication, Model model) {
-        EventDto eventDto = eventService.findByIdDto(id)
+        Event event = eventService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
         User organizer = (User) authentication.getPrincipal();
-        Event event = EventMapper.toEntity(eventDto);
         if (!eventService.canUserModifyEvent(event, organizer)) {
             throw new RuntimeException("You don't have permission to edit this event");
         }
 
         CreateEventDto createEventDto = EventMapper.toCreateDto(event);
+        EventDto eventDto = EventMapper.toDto(event);
+
         model.addAttribute("event", createEventDto);
-        model.addAttribute("eventEntity", eventDto);
+        model.addAttribute("eventDto", eventDto);
         model.addAttribute("categories", Event.EventCategory.values());
         model.addAttribute("currentPage", "organizer-events");
         return "organizer/edit-event";
@@ -121,7 +122,7 @@ public class OrganizerController {
         if (result.hasErrors()) {
             EventDto eventDto = eventService.findByIdDto(id)
                     .orElseThrow(() -> new RuntimeException("Event not found"));
-            model.addAttribute("eventEntity", eventDto);
+            model.addAttribute("eventDto", eventDto);
             model.addAttribute("categories", Event.EventCategory.values());
             model.addAttribute("currentPage", "organizer-events");
             return "organizer/edit-event";
@@ -129,21 +130,22 @@ public class OrganizerController {
 
         try {
             User organizer = (User) authentication.getPrincipal();
-            EventDto existingEventDto = eventService.findByIdDto(id)
+            Event existingEvent = eventService.findById(id)
                     .orElseThrow(() -> new RuntimeException("Event not found"));
 
-            Event existingEvent = EventMapper.toEntity(existingEventDto);
             if (!eventService.canUserModifyEvent(existingEvent, organizer)) {
                 throw new RuntimeException("You don't have permission to edit this event");
             }
 
-            eventService.updateEventDto(id, createEventDto);
+            Event event = EventMapper.toEntity(createEventDto);
+            event.setId(id);
+            eventService.updateEvent(event);
             redirectAttributes.addFlashAttribute("message", "Event updated successfully!");
             return "redirect:/organizer/events";
         } catch (Exception e) {
             EventDto eventDto = eventService.findByIdDto(id)
                     .orElseThrow(() -> new RuntimeException("Event not found"));
-            model.addAttribute("eventEntity", eventDto);
+            model.addAttribute("eventDto", eventDto);
             model.addAttribute("error", "Failed to update event: " + e.getMessage());
             model.addAttribute("categories", Event.EventCategory.values());
             model.addAttribute("currentPage", "organizer-events");
