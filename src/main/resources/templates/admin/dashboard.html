@@ -142,8 +142,9 @@
               </thead>
               <tbody>
               <tr th:each="event : ${pendingEventsList}">
+                <!--/*@thymesVar id="event" type="com.example.ticketmaster.dto.EventDto"*/-->
                 <td th:text="${event.name}">Event Name</td>
-                <td th:text="${event.organizer.firstName + ' ' + event.organizer.lastName}">Organizer Name</td>
+                <td th:text="${event.organizerName}">Organizer Name</td>
                 <td th:text="${#temporals.format(event.eventDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</td>
                 <td><span class="badge bg-primary" th:text="${event.category}">CONCERT</span></td>
                 <td>

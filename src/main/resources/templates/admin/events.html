@@ -60,7 +60,7 @@
                   <tbody>
                   <tr th:each="event : ${pendingEvents}">
                     <td th:text="${event.name}">Event Name</td>
-                    <td th:text="${event.organizer.firstName + ' ' + event.organizer.lastName}">Organizer Name</td>
+                    <td th:text="${event.organizerName}">Organizer Name</td>
                     <td th:text="${#temporals.format(event.eventDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</td>
                     <td th:text="${event.location}">Event Location</td>
                     <td><span class="badge bg-primary" th:text="${event.category}">CONCERT</span></td>
@@ -100,7 +100,7 @@
                               <div class="row mb-3">
                                 <div class="col-md-4">
                                   <p class="text-muted mb-1">Organizer</p>
-                                  <p class="fw-bold" th:text="${event.organizer.firstName + ' ' + event.organizer.lastName}">Organizer Name</p>
+                                  <p class="fw-bold" th:text="${event.organizerName}">Organizer Name</p>
                                 </div>
                                 <div class="col-md-4">
                                   <p class="text-muted mb-1">Category</p>
@@ -199,18 +199,18 @@
                   <tbody>
                   <tr th:each="event : ${events}">
                     <td th:text="${event.name}">Event Name</td>
-                    <td th:text="${event.organizer.firstName + ' ' + event.organizer.lastName}">Organizer Name</td>
+                    <td th:text="${event.organizerName}">Organizer Name</td>
                     <td th:text="${#temporals.format(event.eventDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</td>
                     <td><span class="badge bg-primary" th:text="${event.category}">CONCERT</span></td>
                     <td>
-                                                    <span class="badge"
-                                                          th:classappend="${event.status.name() == 'APPROVED' ? 'bg-success' :
-                                                                        (event.status.name() == 'PENDING_APPROVAL' ? 'bg-warning' :
-                                                                        (event.status.name() == 'REJECTED' ? 'bg-danger' :
-                                                                        (event.status.name() == 'CANCELLED' ? 'bg-secondary' : 'bg-info')))}"
-                                                          th:text="${event.status}">
-                                                        Status
-                                                    </span>
+                      <span class="badge"
+                            th:classappend="${event.status.name() == 'APPROVED' ? 'bg-success' :
+                                          (event.status.name() == 'PENDING_APPROVAL' ? 'bg-warning' :
+                                          (event.status.name() == 'REJECTED' ? 'bg-danger' :
+                                          (event.status.name() == 'CANCELLED' ? 'bg-secondary' : 'bg-info')))}"
+                            th:text="${event.status}">
+                        Status
+                      </span>
                     </td>
                     <td>
                       <div class="btn-group">
@@ -249,7 +249,7 @@
                               <div class="row mb-3">
                                 <div class="col-md-4">
                                   <p class="text-muted mb-1">Organizer</p>
-                                  <p class="fw-bold" th:text="${event.organizer.firstName + ' ' + event.organizer.lastName}">Organizer Name</p>
+                                  <p class="fw-bold" th:text="${event.organizerName}">Organizer Name</p>
                                 </div>
                                 <div class="col-md-4">
                                   <p class="text-muted mb-1">Category</p>
@@ -259,12 +259,12 @@
                                   <p class="text-muted mb-1">Status</p>
                                   <span class="badge"
                                         th:classappend="${event.status.name() == 'APPROVED' ? 'bg-success' :
-                                                                                                (event.status.name() == 'PENDING_APPROVAL' ? 'bg-warning' :
-                                                                                                (event.status.name() == 'REJECTED' ? 'bg-danger' :
-                                                                                                (event.status.name() == 'CANCELLED' ? 'bg-secondary' : 'bg-info')))}"
+                                                        (event.status.name() == 'PENDING_APPROVAL' ? 'bg-warning' :
+                                                        (event.status.name() == 'REJECTED' ? 'bg-danger' :
+                                                        (event.status.name() == 'CANCELLED' ? 'bg-secondary' : 'bg-info')))}"
                                         th:text="${event.status}">
-                                                                                Status
-                                                                            </span>
+                                    Status
+                                  </span>
                                 </div>
                               </div>
                               <div class="row mb-3">
@@ -332,7 +332,6 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Search functionality for all events
     const searchInput = document.getElementById('searchAllEvents');
     if (searchInput) {
       searchInput.addEventListener('input', function() {

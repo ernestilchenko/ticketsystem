@@ -61,7 +61,7 @@
               <p class="card-text" th:text="${event.description}">Detailed event description...</p>
 
               <h5>Organizer</h5>
-              <p class="card-text" th:text="${event.organizer.firstName + ' ' + event.organizer.lastName}">Organizer Name</p>
+              <p class="card-text" th:text="${event.organizerName}">Organizer Name</p>
 
               <div class="mt-4" th:if="${event.availableSeats > 0}">
                 <h5>Get Your Tickets</h5>
