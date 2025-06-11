@@ -5,224 +5,351 @@
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
 <div class="dashboard-container">
-  <div th:replace="~{fragments/layout :: sidebar-admin}"></div>
+    <div th:replace="~{fragments/layout :: sidebar-admin}"></div>
 
-  <div class="content-wrapper">
-    <div class="container-fluid">
-      <h1 class="mb-4">Admin Dashboard</h1>
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">Admin Dashboard</h1>
+                <span class="badge bg-primary fs-6">Welcome, <span sec:authentication="name">Admin</span></span>
+            </div>
 
-      <div th:if="${message}" class="alert alert-success alert-dismissible fade show">
-        <i class="bi bi-check-circle-fill me-2"></i><span th:text="${message}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
+            <div th:if="${message}" class="alert alert-success alert-dismissible fade show">
+                <i class="bi bi-check-circle-fill me-2"></i><span th:text="${message}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
 
-      <div class="row">
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card dashboard-stat-card border-0 shadow-sm h-100">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <h6 class="text-muted">Total Users</h6>
-                  <h2 class="mb-0" th:text="${totalUsers}">0</h2>
+            <div class="row">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card dashboard-stat-card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-1">Total Users</h6>
+                                    <h2 class="mb-0 text-primary" th:text="${totalUsers}">0</h2>
+                                    <small class="text-success"><i class="bi bi-arrow-up"></i> Active system</small>
+                                </div>
+                                <div class="card-icon text-primary">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                            </div>
+                            <a th:href="@{/admin/users}" class="btn btn-sm btn-outline-primary mt-3">
+                                <i class="bi bi-eye me-1"></i>View Users
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-icon text-primary">
-                  <i class="bi bi-people-fill"></i>
-                </div>
-              </div>
-              <a th:href="@{/admin/users}" class="btn btn-sm btn-outline-primary mt-3">View Users</a>
-            </div>
-          </div>
-        </div>
 
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card dashboard-stat-card success border-0 shadow-sm h-100">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <h6 class="text-muted">Total Events</h6>
-                  <h2 class="mb-0" th:text="${totalEvents}">0</h2>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card dashboard-stat-card success border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-1">Total Events</h6>
+                                    <h2 class="mb-0 text-success" th:text="${totalEvents}">0</h2>
+                                    <small class="text-muted">All events in system</small>
+                                </div>
+                                <div class="card-icon text-success">
+                                    <i class="bi bi-calendar-event-fill"></i>
+                                </div>
+                            </div>
+                            <a th:href="@{/admin/events}" class="btn btn-sm btn-outline-success mt-3">
+                                <i class="bi bi-gear me-1"></i>Manage Events
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-icon text-success">
-                  <i class="bi bi-calendar-event-fill"></i>
-                </div>
-              </div>
-              <a th:href="@{/admin/events}" class="btn btn-sm btn-outline-success mt-3">View Events</a>
-            </div>
-          </div>
-        </div>
 
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card dashboard-stat-card warning border-0 shadow-sm h-100">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <h6 class="text-muted">Pending Events</h6>
-                  <h2 class="mb-0" th:text="${pendingEvents}">0</h2>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card dashboard-stat-card warning border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-1">Pending Approval</h6>
+                                    <h2 class="mb-0 text-warning" th:text="${pendingEvents}">0</h2>
+                                    <small class="text-warning" th:if="${pendingEvents > 0}">
+                                        <i class="bi bi-exclamation-triangle"></i> Requires attention
+                                    </small>
+                                    <small class="text-success" th:if="${pendingEvents == 0}">
+                                        <i class="bi bi-check-circle"></i> All approved
+                                    </small>
+                                </div>
+                                <div class="card-icon text-warning">
+                                    <i class="bi bi-hourglass-split"></i>
+                                </div>
+                            </div>
+                            <a th:href="@{/admin/events}" class="btn btn-sm btn-outline-warning mt-3">
+                                <i class="bi bi-clock me-1"></i>Review Now
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-icon text-warning">
-                  <i class="bi bi-hourglass-split"></i>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card dashboard-stat-card info border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-1">Total Tickets</h6>
+                                    <h2 class="mb-0 text-info" th:text="${totalTickets}">0</h2>
+                                    <small class="text-muted">Tickets sold</small>
+                                </div>
+                                <div class="card-icon text-info">
+                                    <i class="bi bi-ticket-perforated-fill"></i>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-info mt-3" disabled>
+                                <i class="bi bi-graph-up me-1"></i>View Analytics
+                            </button>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <a th:href="@{/admin/events}" class="btn btn-sm btn-outline-warning mt-3">Review Events</a>
             </div>
-          </div>
-        </div>
 
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card dashboard-stat-card info border-0 shadow-sm h-100">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <h6 class="text-muted">Total Tickets</h6>
-                  <h2 class="mb-0" th:text="${totalTickets}">0</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i>System Overview</h5>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="changeChartType('bar')">Bar Chart</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeChartType('doughnut')">Doughnut
+                                        Chart</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeChartType('line')">Line
+                                        Chart</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="systemStats" style="max-height: 300px;"></canvas>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-icon text-info">
-                  <i class="bi bi-ticket-perforated-fill"></i>
+
+                <div class="col-lg-4">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a th:href="@{/admin/users}" class="btn btn-outline-primary">
+                                    <i class="bi bi-people me-2"></i>Manage Users
+                                </a>
+                                <a th:href="@{/admin/events}" class="btn btn-outline-success">
+                                    <i class="bi bi-calendar-event me-2"></i>Manage Events
+                                </a>
+                                <button type="button" class="btn btn-outline-warning" disabled>
+                                    <i class="bi bi-gear me-2"></i>System Settings
+                                </button>
+                                <button type="button" class="btn btn-outline-info" disabled>
+                                    <i class="bi bi-file-earmark-text me-2"></i>Generate Reports
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>System Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span>Database</span>
+                                <span class="badge bg-success">Online</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span>Server Status</span>
+                                <span class="badge bg-success">Healthy</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span>Last Backup</span>
+                                <span class="badge bg-info">2 hours ago</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Pending Tasks</span>
+                                <span class="badge bg-warning" th:text="${pendingEvents}">0</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <button class="btn btn-sm btn-outline-info mt-3" disabled>View Tickets</button>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col-lg-7">
-          <div class="card shadow-sm mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <h5 class="mb-0">System Overview</h5>
+            <div class="card shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Pending Event Approvals</h5>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-warning" th:text="${pendingEvents} + ' pending'">0 pending</span>
+                        <a th:href="@{/admin/events}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-arrow-right me-1"></i>View All Events
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover"
+                               th:if="${pendingEventsList != null && !pendingEventsList.empty}">
+                            <thead class="table-light">
+                            <tr>
+                                <th><i class="bi bi-calendar-event me-1"></i>Event Name</th>
+                                <th><i class="bi bi-person me-1"></i>Organizer</th>
+                                <th><i class="bi bi-clock me-1"></i>Date</th>
+                                <th><i class="bi bi-tag me-1"></i>Category</th>
+                                <th><i class="bi bi-gear me-1"></i>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="event : ${pendingEventsList}">
+                                <td>
+                                    <strong th:text="${event.name}">Event Name</strong>
+                                    <br><small class="text-muted" th:text="${event.location}">Location</small>
+                                </td>
+                                <td th:text="${event.organizerName}">Organizer Name</td>
+                                <td>
+                                    <span th:text="${#temporals.format(event.eventDate, 'dd MMM yyyy')}">01 Jan 2025</span>
+                                    <br><small class="text-muted"
+                                               th:text="${#temporals.format(event.eventDate, 'HH:mm')}">19:00</small>
+                                </td>
+                                <td><span class="badge bg-primary" th:text="${event.category}">CONCERT</span></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <form th:action="@{/admin/events/{id}/approve(id=${event.id})}" method="post"
+                                              class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-success"
+                                                    data-bs-toggle="tooltip" data-bs-title="Approve Event">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        </form>
+                                        <form th:action="@{/admin/events/{id}/reject(id=${event.id})}" method="post"
+                                              class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-danger" data-bs-toggle="tooltip"
+                                                    data-bs-title="Reject Event">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center py-4" th:if="${pendingEvents == 0}">
+                            <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3 text-success">All Events Reviewed!</h5>
+                            <p class="text-muted">No pending events require your attention at this time.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-              <canvas id="systemStats" width="400" height="200"></canvas>
-            </div>
-          </div>
         </div>
-
-        <div class="col-lg-5">
-          <div class="card shadow-sm mb-4">
-            <div class="card-header">
-              <h5 class="mb-0">Admin Actions</h5>
-            </div>
-            <div class="card-body">
-              <div class="d-grid gap-3">
-                <a th:href="@{/admin/users}" class="btn btn-outline-primary">
-                  <i class="bi bi-people me-2"></i>Manage Users
-                </a>
-                <a th:href="@{/admin/events}" class="btn btn-outline-success">
-                  <i class="bi bi-calendar-event me-2"></i>Manage Events
-                </a>
-                <button type="button" class="btn btn-outline-warning" disabled>
-                  <i class="bi bi-gear me-2"></i>System Settings
-                </button>
-                <button type="button" class="btn btn-outline-info" disabled>
-                  <i class="bi bi-file-earmark-text me-2"></i>View Reports
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card shadow-sm">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">Pending Event Approvals</h5>
-          <a th:href="@{/admin/events}" class="btn btn-sm btn-primary">View All Events</a>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-hover" th:if="${pendingEventsList != null && !pendingEventsList.empty}">
-              <thead>
-              <tr>
-                <th>Event Name</th>
-                <th>Organizer</th>
-                <th>Date</th>
-                <th>Category</th>
-                <th>Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr th:each="event : ${pendingEventsList}">
-                <td th:text="${event.name}">Event Name</td>
-                <td th:text="${event.organizerName}">Organizer Name</td>
-                <td th:text="${#temporals.format(event.eventDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</td>
-                <td><span class="badge bg-primary" th:text="${event.category}">CONCERT</span></td>
-                <td>
-                  <div class="btn-group">
-                    <form th:action="@{/admin/events/{id}/approve(id=${event.id})}" method="post">
-                      <button type="submit" class="btn btn-sm btn-success me-1" data-bs-toggle="tooltip" data-bs-title="Approve">
-                        <i class="bi bi-check-lg"></i>
-                      </button>
-                    </form>
-                    <form th:action="@{/admin/events/{id}/reject(id=${event.id})}" method="post">
-                      <button type="submit" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" data-bs-title="Reject">
-                        <i class="bi bi-x-lg"></i>
-                      </button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-            <div class="text-center" th:if="${pendingEvents == 0}">
-              <p>No pending events to approve.</p>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script th:inline="javascript">
-  document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('systemStats').getContext('2d');
-    const myChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Users', 'Events', 'Pending Events', 'Tickets'],
-        datasets: [{
-          label: 'System Statistics',
-          data: [
-            /*[[${totalUsers}]]*/ 5,
-            /*[[${totalEvents}]]*/ 8,
-            /*[[${pendingEvents}]]*/ 3,
-            /*[[${totalTickets}]]*/ 15
-          ],
-          backgroundColor: [
-            'rgba(59, 113, 202, 0.7)',
-            'rgba(20, 164, 77, 0.7)',
-            'rgba(228, 161, 27, 0.7)',
-            'rgba(84, 180, 211, 0.7)'
-          ],
-          borderColor: [
-            'rgb(59, 113, 202)',
-            'rgb(20, 164, 77)',
-            'rgb(228, 161, 27)',
-            'rgb(84, 180, 211)'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              precision: 0
-            }
-          }
-        }
-      }
+    let currentChart;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initializeChart();
     });
-  });
+
+    function initializeChart(type = 'bar') {
+        const ctx = document.getElementById('systemStats').getContext('2d');
+
+        if (currentChart) {
+            currentChart.destroy();
+        }
+
+        const data = {
+            labels: ['Users', 'Events', 'Pending Events', 'Tickets'],
+            datasets: [{
+                label: 'System Statistics',
+                data: [
+                    /*[[${totalUsers}]]*/ 5,
+                    /*[[${totalEvents}]]*/ 8,
+                    /*[[${pendingEvents}]]*/ 3,
+                    /*[[${totalTickets}]]*/ 15
+                ],
+                backgroundColor: [
+                    'rgba(59, 113, 202, 0.8)',
+                    'rgba(20, 164, 77, 0.8)',
+                    'rgba(228, 161, 27, 0.8)',
+                    'rgba(84, 180, 211, 0.8)'
+                ],
+                borderColor: [
+                    'rgb(59, 113, 202)',
+                    'rgb(20, 164, 77)',
+                    'rgb(228, 161, 27)',
+                    'rgb(84, 180, 211)'
+                ],
+                borderWidth: 2
+            }]
+        };
+
+        const config = {
+            type: type,
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: type === 'doughnut',
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: 'white',
+                        bodyColor: 'white',
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function (context) {
+                                if (type === 'doughnut') {
+                                    return context.label + ': ' + context.parsed;
+                                }
+                                return 'Count: ' + context.parsed.y;
+                            }
+                        }
+                    }
+                },
+                scales: type === 'doughnut' ? {} : {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0,
+                            color: '#6c757d'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#6c757d'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    }
+                },
+                animation: {
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        };
+
+        currentChart = new Chart(ctx, config);
+    }
+
+    function changeChartType(type) {
+        initializeChart(type);
+    }
 </script>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
