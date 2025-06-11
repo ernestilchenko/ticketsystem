@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const seatContainer = document.getElementById('seat-container');
 
         if (seatContainer && totalSeats > 0) {
-            // Pobierz zajęte miejsca z serwera
+
             fetchOccupiedSeats(eventId).then(occupiedSeats => {
                 generateSeatMap(totalSeats, occupiedSeats, seatContainer);
             });
@@ -125,12 +125,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Funkcja generująca mapę miejsc
     function generateSeatMap(totalSeats, occupiedSeats, container) {
-        container.innerHTML = ''; // Wyczyść kontener
+        container.innerHTML = ''; 
         
         let seatRows = Math.ceil(Math.sqrt(totalSeats));
         let seatsPerRow = Math.ceil(totalSeats / seatRows);
 
-        // Utwórz legendę
+
         const legend = document.createElement('div');
         legend.className = 'mb-3 text-center';
         legend.innerHTML = `
@@ -142,12 +142,10 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         container.appendChild(legend);
 
-        // Generuj rzędy miejsc
         for (let row = 0; row < seatRows; row++) {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'd-flex justify-content-center my-2';
             
-            // Dodaj numer rzędu
             const rowLabel = document.createElement('div');
             rowLabel.className = 'align-self-center me-2 fw-bold text-muted';
             rowLabel.textContent = `${row + 1}`;
@@ -170,27 +168,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     seatBtn.textContent = seat + 1;
 
                     if (isOccupied) {
-                        // Miejsce zajęte
                         seatBtn.className += ' btn-danger';
                         seatBtn.disabled = true;
                         seatBtn.setAttribute('data-bs-toggle', 'tooltip');
                         seatBtn.setAttribute('data-bs-title', 'Miejsce zajęte');
                     } else {
-                        // Miejsce dostępne
                         seatBtn.className += ' btn-outline-success';
                         
                         seatBtn.addEventListener('click', function() {
-                            // Usuń wybór z innych miejsc
                             document.querySelectorAll('.seat-btn:not(.btn-danger)').forEach(btn => {
                                 btn.classList.remove('btn-primary', 'active');
                                 btn.classList.add('btn-outline-success');
                             });
 
-                            // Wybierz to miejsce
                             this.classList.remove('btn-outline-success');
                             this.classList.add('btn-primary', 'active');
 
-                            // Ustaw wartość w ukrytym polu
                             const seatInput = document.getElementById('seatNumber');
                             if (seatInput) {
                                 seatInput.value = this.getAttribute('data-seat');
@@ -205,7 +198,6 @@ document.addEventListener('DOMContentLoaded', function() {
             container.appendChild(rowDiv);
         }
 
-        // Inicjalizuj tooltips dla zajętych miejsc
         const tooltips = container.querySelectorAll('[data-bs-toggle="tooltip"]');
         tooltips.forEach(tooltip => {
             new bootstrap.Tooltip(tooltip);
@@ -222,14 +214,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const selectedSeat = seatInput ? seatInput.value : '';
             
             if (!selectedSeat || selectedSeat === 'General Admission') {
-                // Jeśli nie wybrano miejsca, użyj General Admission
                 if (seatInput) {
                     seatInput.value = 'General Admission';
                 }
                 return true;
             }
             
-            // Sprawdź czy miejsce jest nadal dostępne
             e.preventDefault();
             checkSeatAndSubmit(this, selectedSeat);
         });
@@ -275,15 +265,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     form.submit();
                 } else {
                     alert('Wybrane miejsce zostało właśnie zajęte przez innego użytkownika. Proszę wybrać inne miejsce.');
-                    // Odśwież mapę miejsc
                     location.reload();
                 }
             } else {
-                form.submit(); // W przypadku błędu API, spróbuj normalnie
+                form.submit(); 
             }
         } catch (error) {
             console.error('Error checking seat availability:', error);
-            form.submit(); // W przypadku błędu, spróbuj normalnie
+            form.submit();
         }
     }
 });
