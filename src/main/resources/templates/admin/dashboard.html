@@ -93,7 +93,7 @@
               <h5 class="mb-0">System Overview</h5>
             </div>
             <div class="card-body">
-              <canvas id="systemStats" height="250"></canvas>
+              <canvas id="systemStats" width="400" height="200"></canvas>
             </div>
           </div>
         </div>
@@ -142,7 +142,6 @@
               </thead>
               <tbody>
               <tr th:each="event : ${pendingEventsList}">
-                <!--/*@thymesVar id="event" type="com.example.ticketmaster.dto.EventDto"*/-->
                 <td th:text="${event.name}">Event Name</td>
                 <td th:text="${event.organizerName}">Organizer Name</td>
                 <td th:text="${#temporals.format(event.eventDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</td>
@@ -174,11 +173,9 @@
   </div>
 </div>
 
-<footer th:replace="~{fragments/layout :: footer}"></footer>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script th:inline="javascript">
   document.addEventListener('DOMContentLoaded', function() {
-    // System Stats Chart
     const ctx = document.getElementById('systemStats').getContext('2d');
     const myChart = new Chart(ctx, {
       type: 'bar',
@@ -187,10 +184,10 @@
         datasets: [{
           label: 'System Statistics',
           data: [
-            /*[[${totalUsers}]]*/ 0,
-            /*[[${totalEvents}]]*/ 0,
-            /*[[${pendingEvents}]]*/ 0,
-            /*[[${totalTickets}]]*/ 0
+            /*[[${totalUsers}]]*/ 5,
+            /*[[${totalEvents}]]*/ 8,
+            /*[[${pendingEvents}]]*/ 3,
+            /*[[${totalTickets}]]*/ 15
           ],
           backgroundColor: [
             'rgba(59, 113, 202, 0.7)',
@@ -209,6 +206,12 @@
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
         scales: {
           y: {
             beginAtZero: true,
@@ -221,5 +224,7 @@
     });
   });
 </script>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>
