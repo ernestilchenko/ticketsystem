@@ -110,94 +110,6 @@
                                             <i class="bi bi-eye"></i>
                                         </button>
                                     </div>
-
-                                    <!-- Event Details Modal -->
-                                    <div class="modal fade" th:id="'eventDetailsModal' + ${event.id}" tabindex="-1"
-                                         aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" th:text="${event.name}">Event Name</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4">
-                                                            <p class="text-muted mb-1">Category</p>
-                                                            <p class="fw-bold" th:text="${event.category}">CONCERT</p>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <p class="text-muted mb-1">Status</p>
-                                                            <span class="badge"
-                                                                  th:classappend="${event.status.name() == 'APPROVED' ? 'bg-success' :
-                                                      (event.status.name() == 'PENDING_APPROVAL' ? 'bg-warning' :
-                                                      (event.status.name() == 'REJECTED' ? 'bg-danger' :
-                                                      (event.status.name() == 'CANCELLED' ? 'bg-secondary' : 'bg-info')))}"
-                                                                  th:text="${event.status}">
-                                Status
-                              </span>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <p class="text-muted mb-1">Price</p>
-                                                            <p class="fw-bold" th:text="'$' + ${event.price}">$99</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4">
-                                                            <p class="text-muted mb-1">Date & Time</p>
-                                                            <p class="fw-bold"
-                                                               th:text="${#temporals.format(event.eventDate, 'dd MMM yyyy, HH:mm')}">
-                                                                01 Jan 2025, 19:00</p>
-                                                        </div>
-                                                        <div class="col-md-8">
-                                                            <p class="text-muted mb-1">Location</p>
-                                                            <p class="fw-bold" th:text="${event.location}">Event
-                                                                Location</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4">
-                                                            <p class="text-muted mb-1">Available Seats</p>
-                                                            <p class="fw-bold"
-                                                               th:text="${event.availableSeats} + '/' + ${event.totalSeats}">
-                                                                123/200</p>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <p class="text-muted mb-1">Created</p>
-                                                            <p class="fw-bold"
-                                                               th:text="${#temporals.format(event.createdAt, 'dd MMM yyyy')}">
-                                                                01 Jan 2025</p>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <p class="text-muted mb-1">Last Updated</p>
-                                                            <p class="fw-bold"
-                                                               th:text="${#temporals.format(event.updatedAt, 'dd MMM yyyy')}">
-                                                                01 Jan 2025</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <p class="text-muted mb-1">Description</p>
-                                                        <p th:text="${event.description}">Event description...</p>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Close
-                                                    </button>
-                                                    <a th:if="${event.status.name() != 'CANCELLED' && event.status.name() != 'COMPLETED'}"
-                                                       th:href="@{/organizer/events/{id}/edit(id=${event.id})}"
-                                                       class="btn btn-primary">
-                                                        <i class="bi bi-pencil me-1"></i>Edit Event
-                                                    </a>
-                                                    <a th:href="@{/organizer/events/{id}/tickets(id=${event.id})}"
-                                                       class="btn btn-info">
-                                                        <i class="bi bi-ticket-perforated me-1"></i>View Tickets
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </td>
                             </tr>
                             </tbody>
@@ -215,11 +127,94 @@
     </div>
 </div>
 
+<div th:each="event : ${events}">
+    <div class="modal fade" th:id="'eventDetailsModal' + ${event.id}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:text="${event.name}">Event Name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1">Category</p>
+                            <p class="fw-bold" th:text="${event.category}">CONCERT</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1">Status</p>
+                            <span class="badge"
+                                  th:classappend="${event.status.name() == 'APPROVED' ? 'bg-success' :
+                                      (event.status.name() == 'PENDING_APPROVAL' ? 'bg-warning' :
+                                      (event.status.name() == 'REJECTED' ? 'bg-danger' :
+                                      (event.status.name() == 'CANCELLED' ? 'bg-secondary' : 'bg-info')))}"
+                                  th:text="${event.status}">
+                                Status
+                            </span>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1">Price</p>
+                            <p class="fw-bold" th:text="'$' + ${event.price}">$99</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1">Date & Time</p>
+                            <p class="fw-bold"
+                               th:text="${#temporals.format(event.eventDate, 'dd MMM yyyy, HH:mm')}">
+                                01 Jan 2025, 19:00</p>
+                        </div>
+                        <div class="col-md-8">
+                            <p class="text-muted mb-1">Location</p>
+                            <p class="fw-bold" th:text="${event.location}">Event Location</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1">Available Seats</p>
+                            <p class="fw-bold"
+                               th:text="${event.availableSeats} + '/' + ${event.totalSeats}">
+                                123/200</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1">Created</p>
+                            <p class="fw-bold"
+                               th:text="${#temporals.format(event.createdAt, 'dd MMM yyyy')}">
+                                01 Jan 2025</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1">Last Updated</p>
+                            <p class="fw-bold"
+                               th:text="${#temporals.format(event.updatedAt, 'dd MMM yyyy')}">
+                                01 Jan 2025</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p class="text-muted mb-1">Description</p>
+                        <p th:text="${event.description}">Event description...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a th:if="${event.status.name() != 'CANCELLED' && event.status.name() != 'COMPLETED'}"
+                       th:href="@{/organizer/events/{id}/edit(id=${event.id})}"
+                       class="btn btn-primary">
+                        <i class="bi bi-pencil me-1"></i>Edit Event
+                    </a>
+                    <a th:href="@{/organizer/events/{id}/tickets(id=${event.id})}"
+                       class="btn btn-info">
+                        <i class="bi bi-ticket-perforated me-1"></i>View Tickets
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Filter and search functionality
         const searchInput = document.getElementById('search-events');
         const statusFilter = document.getElementById('status-filter');
         const sortBy = document.getElementById('sort-by');
@@ -230,7 +225,6 @@
             const selectedStatus = statusFilter.value;
             const selectedSort = sortBy.value;
 
-            // Filter
             eventRows.forEach(row => {
                 const eventName = row.cells[0].textContent.toLowerCase();
                 const eventStatus = row.getAttribute('data-status');
@@ -245,7 +239,6 @@
                 }
             });
 
-            // Sort
             const tbody = document.querySelector('tbody');
             const rowsArray = Array.from(eventRows).filter(row => row.style.display !== 'none');
 
@@ -258,7 +251,7 @@
                     const dateA = new Date(a.cells[1].textContent);
                     const dateB = new Date(b.cells[1].textContent);
                     return dateA - dateB;
-                } else { // date-desc (default)
+                } else {
                     const dateA = new Date(a.cells[1].textContent);
                     const dateB = new Date(b.cells[1].textContent);
                     return dateB - dateA;

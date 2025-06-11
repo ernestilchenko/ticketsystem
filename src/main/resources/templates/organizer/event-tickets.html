@@ -5,112 +5,112 @@
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
 <div class="dashboard-container">
-  <div th:replace="~{fragments/layout :: sidebar-organizer}"></div>
+    <div th:replace="~{fragments/layout :: sidebar-organizer}"></div>
 
-  <div class="content-wrapper">
-    <div class="container-fluid">
-      <!--/*@thymesVar id="event" type="com.example.ticketmaster.dto.EventDto"*/-->
-      <!--/*@thymesVar id="tickets" type="java.util.List<com.example.ticketmaster.dto.TicketDto>"*/-->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">Event Tickets</h1>
-        <a th:href="@{/organizer/events}" class="btn btn-outline-primary">
-          <i class="bi bi-arrow-left me-2"></i>Back to Events
-        </a>
-      </div>
-
-      <div class="card shadow-sm mb-4">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <h4 th:text="${event.name}">Event Name</h4>
-              <p class="text-muted">
-                <i class="bi bi-calendar-event me-2"></i>
-                <span th:text="${#temporals.format(event.eventDate, 'EEEE, dd MMMM yyyy, HH:mm')}">Monday, 01 January 2025, 19:00</span>
-              </p>
-              <p class="text-muted">
-                <i class="bi bi-geo-alt me-2"></i>
-                <span th:text="${event.location}">Event Location</span>
-              </p>
-              <p class="text-muted">
-                <i class="bi bi-tag me-2"></i>
-                <span th:text="'$' + ${event.price} + ' per ticket'">$99 per ticket</span>
-              </p>
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">Event Tickets</h1>
+                <a th:href="@{/organizer/events}" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Events
+                </a>
             </div>
-            <div class="col-md-6">
-              <div class="card bg-light">
+
+            <div class="card shadow-sm mb-4">
                 <div class="card-body">
-                  <h5 class="card-title">Ticket Sales Summary</h5>
-                  <div class="row text-center">
-                    <div class="col-4">
-                      <h2 th:text="${event.totalSeats - event.availableSeats}">123</h2>
-                      <p class="text-muted">Sold</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 th:text="${event.name}">Event Name</h4>
+                            <p class="text-muted">
+                                <i class="bi bi-calendar-event me-2"></i>
+                                <span th:text="${#temporals.format(event.eventDate, 'EEEE, dd MMMM yyyy, HH:mm')}">Monday, 01 January 2025, 19:00</span>
+                            </p>
+                            <p class="text-muted">
+                                <i class="bi bi-geo-alt me-2"></i>
+                                <span th:text="${event.location}">Event Location</span>
+                            </p>
+                            <p class="text-muted">
+                                <i class="bi bi-tag me-2"></i>
+                                <span th:text="'$' + ${event.price} + ' per ticket'">$99 per ticket</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">Ticket Sales Summary</h5>
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <h2 th:text="${event.totalSeats - event.availableSeats}">123</h2>
+                                            <p class="text-muted">Sold</p>
+                                        </div>
+                                        <div class="col-4">
+                                            <h2 th:text="${event.availableSeats}">77</h2>
+                                            <p class="text-muted">Available</p>
+                                        </div>
+                                        <div class="col-4">
+                                            <h2 th:text="${event.totalSeats}">200</h2>
+                                            <p class="text-muted">Total</p>
+                                        </div>
+                                    </div>
+                                    <div class="progress mt-3">
+                                        <div class="progress-bar bg-primary" role="progressbar"
+                                             th:style="'width: ' + ${(event.totalSeats - event.availableSeats) * 100 / event.totalSeats} + '%'"
+                                             th:attr="aria-valuenow=${event.totalSeats - event.availableSeats}, aria-valuemin='0', aria-valuemax=${event.totalSeats}">
+                                            <span th:text="${#numbers.formatDecimal((event.totalSeats - event.availableSeats) * 100 / event.totalSeats, 0, 0)} + '%'">50%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-4">
-                      <h2 th:text="${event.availableSeats}">77</h2>
-                      <p class="text-muted">Available</p>
-                    </div>
-                    <div class="col-4">
-                      <h2 th:text="${event.totalSeats}">200</h2>
-                      <p class="text-muted">Total</p>
-                    </div>
-                  </div>
-                  <div class="progress mt-3">
-                    <div class="progress-bar bg-primary" role="progressbar"
-                         th:style="'width: ' + ${(event.totalSeats - event.availableSeats) * 100 / event.totalSeats} + '%'"
-                         th:attr="aria-valuenow=${event.totalSeats - event.availableSeats}, aria-valuemin='0', aria-valuemax=${event.totalSeats}">
-                      <span th:text="${#numbers.formatDecimal((event.totalSeats - event.availableSeats) * 100 / event.totalSeats, 0, 0)} + '%'">50%</span>
-                    </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="row mb-4">
-        <div class="col-md-6">
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-search"></i></span>
-            <input type="text" class="form-control" id="search-tickets" placeholder="Search tickets...">
-          </div>
-        </div>
-        <div class="col-md-3">
-          <select class="form-select" id="filter-status">
-            <option value="ALL" selected>All Statuses</option>
-            <option value="PAID">Paid</option>
-            <option value="RESERVED">Reserved</option>
-            <option value="CANCELLED">Cancelled</option>
-            <option value="USED">Used</option>
-          </select>
-        </div>
-      </div>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" id="search-tickets" placeholder="Search tickets...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filter-status">
+                        <option value="ALL" selected>All Statuses</option>
+                        <option value="PAID">Paid</option>
+                        <option value="RESERVED">Reserved</option>
+                        <option value="CANCELLED">Cancelled</option>
+                        <option value="USED">Used</option>
+                    </select>
+                </div>
+            </div>
 
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-hover" th:if="${tickets != null && !tickets.empty}">
-              <thead>
-              <tr>
-                <th>Ticket Number</th>
-                <th>Customer</th>
-                <th>Purchase Date</th>
-                <th>Seat</th>
-                <th>Price</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr th:each="ticket : ${tickets}"
-                  th:data-status="${ticket.status}"
-                  th:data-customer="${ticket.userName}">
-                <td th:text="${ticket.ticketNumber}">TKT-12345-6789</td>
-                <td th:text="${ticket.userName}">John Doe</td>
-                <td th:text="${#temporals.format(ticket.purchaseDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</td>
-                <td th:text="${ticket.seatNumber}">Row 1, Seat 12</td>
-                <td th:text="'$' + ${ticket.price}">$99</td>
-                <td>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" th:if="${tickets != null && !tickets.empty}">
+                            <thead>
+                            <tr>
+                                <th>Ticket Number</th>
+                                <th>Customer</th>
+                                <th>Purchase Date</th>
+                                <th>Seat</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="ticket : ${tickets}"
+                                th:data-status="${ticket.status}"
+                                th:data-customer="${ticket.userName}">
+                                <td th:text="${ticket.ticketNumber}">TKT-12345-6789</td>
+                                <td th:text="${ticket.userName}">John Doe</td>
+                                <td th:text="${#temporals.format(ticket.purchaseDate, 'dd MMM yyyy, HH:mm')}">01 Jan
+                                    2025, 19:00
+                                </td>
+                                <td th:text="${ticket.seatNumber}">Row 1, Seat 12</td>
+                                <td th:text="'$' + ${ticket.price}">$99</td>
+                                <td>
                   <span class="badge"
                         th:classappend="${ticket.status == 'PAID' ? 'bg-success' :
                                       (ticket.status == 'RESERVED' ? 'bg-warning' :
@@ -118,124 +118,127 @@
                         th:text="${ticket.status}">
                     Status
                   </span>
-                </td>
-                <td>
-                  <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal"
-                          th:data-bs-target="'#ticketDetailsModal' + ${ticket.id}">
-                    <i class="bi bi-eye"></i>
-                  </button>
-
-                  <div class="modal fade" th:id="'ticketDetailsModal' + ${ticket.id}" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title">Ticket Details</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal"
+                                            th:data-bs-target="'#ticketDetailsModal' + ${ticket.id}">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center" th:if="${tickets == null || tickets.empty}">
+                            <p>No tickets have been sold for this event yet.</p>
                         </div>
-                        <div class="modal-body">
-                          <div class="mb-4 text-center">
-                            <h5 th:text="${event.name}">Event Name</h5>
-                            <span class="badge"
-                                  th:classappend="${ticket.status == 'PAID' ? 'bg-success' :
-                                                            (ticket.status == 'RESERVED' ? 'bg-warning' :
-                                                            (ticket.status == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
-                                  th:text="${ticket.status}">
-                              Status
-                            </span>
-                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                          <div class="mb-3">
-                            <h6>Ticket Information</h6>
-                            <ul class="list-group list-group-flush">
-                              <li class="list-group-item d-flex justify-content-between align-items-center">
+<div th:each="ticket : ${tickets}">
+    <div class="modal fade" th:id="'ticketDetailsModal' + ${ticket.id}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ticket Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-4 text-center">
+                        <h5 th:text="${event.name}">Event Name</h5>
+                        <span class="badge"
+                              th:classappend="${ticket.status == 'PAID' ? 'bg-success' :
+                                            (ticket.status == 'RESERVED' ? 'bg-warning' :
+                                            (ticket.status == 'CANCELLED' ? 'bg-danger' : 'bg-info'))}"
+                              th:text="${ticket.status}">
+              Status
+            </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Ticket Information</h6>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span>Ticket Number</span>
                                 <span class="text-muted" th:text="${ticket.ticketNumber}">TKT-12345-6789</span>
-                              </li>
-                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span>Purchase Date</span>
-                                <span class="text-muted" th:text="${#temporals.format(ticket.purchaseDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</span>
-                              </li>
-                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="text-muted"
+                                      th:text="${#temporals.format(ticket.purchaseDate, 'dd MMM yyyy, HH:mm')}">01 Jan 2025, 19:00</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span>Seat</span>
                                 <span class="text-muted" th:text="${ticket.seatNumber}">Row 1, Seat 12</span>
-                              </li>
-                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span>Price</span>
                                 <span class="fw-bold" th:text="'$' + ${ticket.price}">$99</span>
-                              </li>
-                            </ul>
-                          </div>
+                            </li>
+                        </ul>
+                    </div>
 
-                          <div class="mb-3">
-                            <h6>Customer Information</h6>
-                            <ul class="list-group list-group-flush">
-                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="mb-3">
+                        <h6>Customer Information</h6>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span>Name</span>
                                 <span class="text-muted" th:text="${ticket.userName}">John Doe</span>
-                              </li>
-                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span>Email</span>
                                 <span class="text-muted" th:text="${ticket.userEmail}">john.doe@example.com</span>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
-                      </div>
+                            </li>
+                        </ul>
                     </div>
-                  </div>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-            <div class="text-center" th:if="${tickets == null || tickets.empty}">
-              <p>No tickets have been sold for this event yet.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('search-tickets');
-    const statusFilter = document.getElementById('filter-status');
-    const ticketRows = document.querySelectorAll('tbody tr');
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('search-tickets');
+        const statusFilter = document.getElementById('filter-status');
+        const ticketRows = document.querySelectorAll('tbody tr');
 
-    function filterTickets() {
-      const searchTerm = searchInput.value.toLowerCase();
-      const selectedStatus = statusFilter.value;
+        function filterTickets() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedStatus = statusFilter.value;
 
-      ticketRows.forEach(row => {
-        const ticketNumber = row.cells[0].textContent.toLowerCase();
-        const customerName = row.getAttribute('data-customer').toLowerCase();
-        const ticketStatus = row.getAttribute('data-status');
+            ticketRows.forEach(row => {
+                const ticketNumber = row.cells[0].textContent.toLowerCase();
+                const customerName = row.getAttribute('data-customer').toLowerCase();
+                const ticketStatus = row.getAttribute('data-status');
 
-        const statusMatch = selectedStatus === 'ALL' || ticketStatus === selectedStatus;
-        const searchMatch = ticketNumber.includes(searchTerm) || customerName.includes(searchTerm);
+                const statusMatch = selectedStatus === 'ALL' || ticketStatus === selectedStatus;
+                const searchMatch = ticketNumber.includes(searchTerm) || customerName.includes(searchTerm);
 
-        if (statusMatch && searchMatch) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
+                if (statusMatch && searchMatch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
         }
-      });
-    }
 
-    if (searchInput) {
-      searchInput.addEventListener('input', filterTickets);
-    }
+        if (searchInput) {
+            searchInput.addEventListener('input', filterTickets);
+        }
 
-    if (statusFilter) {
-      statusFilter.addEventListener('change', filterTickets);
-    }
-  });
+        if (statusFilter) {
+            statusFilter.addEventListener('change', filterTickets);
+        }
+    });
 </script>
 </body>
 </html>
