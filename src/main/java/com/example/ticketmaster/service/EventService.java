@@ -115,6 +115,11 @@ public class EventService {
     }
 
     public boolean canUserModifyEvent(Event event, User user) {
+        if (event.getOrganizer() == null) {
+            return user.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+        }
+
         return event.getOrganizer().getId().equals(user.getId())
                 || user.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));

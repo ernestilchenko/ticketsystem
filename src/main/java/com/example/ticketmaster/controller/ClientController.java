@@ -4,7 +4,6 @@ import com.example.ticketmaster.dto.EventDto;
 import com.example.ticketmaster.dto.TicketDto;
 import com.example.ticketmaster.entity.Event;
 import com.example.ticketmaster.entity.User;
-import com.example.ticketmaster.mapper.EventMapper;
 import com.example.ticketmaster.mapper.TicketMapper;
 import com.example.ticketmaster.service.EventService;
 import com.example.ticketmaster.service.TicketService;
@@ -71,10 +70,9 @@ public class ClientController {
                                  Authentication authentication,
                                  RedirectAttributes redirectAttributes) {
         try {
-            EventDto eventDto = eventService.findByIdDto(id)
+            Event event = eventService.findById(id)
                     .orElseThrow(() -> new RuntimeException("Event not found"));
 
-            Event event = EventMapper.toEntity(eventDto);
             User client = (User) authentication.getPrincipal();
 
             if (seatNumber == null || seatNumber.trim().isEmpty()) {
@@ -98,10 +96,9 @@ public class ClientController {
                                 Authentication authentication,
                                 RedirectAttributes redirectAttributes) {
         try {
-            EventDto eventDto = eventService.findByIdDto(id)
+            Event event = eventService.findById(id)
                     .orElseThrow(() -> new RuntimeException("Event not found"));
 
-            Event event = EventMapper.toEntity(eventDto);
             User client = (User) authentication.getPrincipal();
 
             if (seatNumber == null || seatNumber.trim().isEmpty()) {

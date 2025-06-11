@@ -155,15 +155,15 @@ public class OrganizerController {
 
     @GetMapping("/events/{id}/tickets")
     public String eventTickets(@PathVariable Long id, Authentication authentication, Model model) {
-        EventDto eventDto = eventService.findByIdDto(id)
+        Event event = eventService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
         User organizer = (User) authentication.getPrincipal();
-        Event event = EventMapper.toEntity(eventDto);
         if (!eventService.canUserModifyEvent(event, organizer)) {
             throw new RuntimeException("You don't have permission to view tickets for this event");
         }
 
+        EventDto eventDto = EventMapper.toDto(event);
         var tickets = ticketService.getTicketsByEvent(event);
         List<TicketDto> ticketDtos = tickets.stream()
                 .map(TicketMapper::toDto)
